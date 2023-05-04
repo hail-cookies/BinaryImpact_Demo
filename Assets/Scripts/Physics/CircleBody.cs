@@ -55,7 +55,8 @@ public class CircleBody : MonoBehaviour
     }
 
     public bool useGravity = true;
-    public bool noClip = false;
+    public bool disableCollision = false;
+    public bool isTrigger = false;
 
     private void OnEnable()
     {
@@ -66,5 +67,14 @@ public class CircleBody : MonoBehaviour
     private void OnDisable()
     {
         CirclePhysics.RemoveBody(this);
+    }
+
+    public delegate void CollisionEvent(CircleCollision collision);
+    public event CollisionEvent OnCollision;
+    public bool sendCollisionEvents = false;
+    public void ReceiveCollision(CircleCollision collision)
+    {
+        if(!sendCollisionEvents) return;
+        OnCollision?.Invoke(collision);
     }
 }

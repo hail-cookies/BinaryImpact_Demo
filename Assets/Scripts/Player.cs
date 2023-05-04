@@ -1,9 +1,5 @@
-using System;
-using System.Runtime.ConstrainedExecution;
-using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Progress;
 
 public class Player : MonoBehaviour
 {
@@ -57,6 +53,7 @@ public class Player : MonoBehaviour
     }
 
     float lastSpawn = 0;
+    int spawnCount = 0;
     private void Spawn()
     {
         if (!spawn) return;
@@ -70,6 +67,7 @@ public class Player : MonoBehaviour
         obj.Item2.Radius = radius;
         obj.Item2.Velocity = spawnVelocity;
         obj.Item1.GetComponent<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV(0, 1, 0, 1, 0.3f, 1);
+        obj.Item1.name = "Phys " + spawnCount++;
     }
 
     void DragFocus()
@@ -100,6 +98,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool focusIsTrigger = true;   
     void ToggleFocus(CircleBody body, bool state)
     {
         if (!body)
@@ -108,7 +107,13 @@ public class Player : MonoBehaviour
         CurrentFocus = state ? body : null;
         focusBaseColor = state ? body.Renderer.material.color : focusBaseColor;
         body.Renderer.material.color = state ? Color.white : focusBaseColor;
-        body.noClip = state;
-        body.useGravity = !state;
+        body.isTrigger = state && focusIsTrigger;
+        body.transform.position = 
+            new Vector3(
+                body.CurrentPosition.x,
+                body.CurrentPosition.y,
+                state ? -1 : 0);
+
+        body.sendCollisionEvents = state;
     }
 }

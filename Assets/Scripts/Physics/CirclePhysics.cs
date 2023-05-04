@@ -73,6 +73,9 @@ public class CirclePhysics : MonoBehaviour
 
     public static int[] GetCollisionArea(Vector2Int coords, out int count)
     {
+        coords.x = Mathf.Clamp(coords.x, 1, Grid.Width - 1);
+        coords.y = Mathf.Clamp(coords.y, 1, Grid.Height - 1);
+
         int[] result = new int[9 * Grid.Capacity];
         count = 0;
         //Down
@@ -128,6 +131,7 @@ public class CirclePhysics : MonoBehaviour
         return false;
     }
 
+    #region Collisions
     static Vector2Int
         downLeft = new Vector2Int(-1, -1),
         down = new Vector2Int(0, -1),
@@ -149,23 +153,7 @@ public class CirclePhysics : MonoBehaviour
         return index;
     }
 
-    void CheckGrid()
-    {
-        for (int x = 1; x < Grid.Width - 1; x++)
-            for (int y = 1; y < Grid.Height - 1; y++)
-            {
-                Vector2Int coords = new Vector2Int(x, y);
-                int[] area = GetCollisionArea(coords, out int count);
-                var cell = Grid.GetCell(coords);
-                for(int i = 0; i <= cell.Index; i++)
-                {
-                    int idA = cell.bodies[i];
-                    for (int k = 0; k < count; k++)
-                        SolveCollision(idA, area[k]);
-                }
-            }
-    }
-
+    List<(int, int)> collisions = new List<(int, int)>();
     void SolveCollision(int idA, int idB)
     {
         CircleBody A = simulatedBodies[idA];
@@ -174,20 +162,43 @@ public class CirclePhysics : MonoBehaviour
         Vector2 delta = A.CurrentPosition - B.CurrentPosition;
         float sqrDist = delta.sqrMagnitude;
         float radius = A.Radius + B.Radius;
-
+        //Bodies are in contact
         if (sqrDist < radius * radius)
         {
-            float dist = Mathf.Sqrt(sqrDist);
-            Vector2 normal = dist == 0 ? Vector2.right : delta / dist;
-            float penetration = radius - dist;
+            if (!A.isTrigger && !B.isTrigger)
+            {
+                float dist = Mathf.Sqrt(sqrDist);
+                Vector2 normal = dist == 0 ? Vector2.right : delta / dist;
+                float penetration = radius - dist;
 
-            float mass = A.Mass + B.Mass;
-            float massRatio = A.Mass / mass;
+                float mass = A.Mass + B.Mass;
+                float massRatio = A.Mass / mass;
 
-            A.CurrentPosition += massRatio * penetration * normal;
-            B.CurrentPosition -= (1f - massRatio) * penetration * normal;
+                A.CurrentPosition += massRatio * penetration * normal;
+                B.CurrentPosition -= (1f - massRatio) * penetration * normal;
+            }
+
+            AddCollision(idA, idB);
         }
     }
+
+    void AddCollision(int idA, int idB)
+    {
+        bool exists = false;
+        foreach (var col in collisions)
+        {
+            //Collision pair already exists
+            if ((col.Item1 == idA && col.Item2 == idB) ||
+                (col.Item1 == idB && col.Item2 == idA))
+            {
+                exists = true; break;
+            }
+        }
+
+        if(!exists)
+            collisions.Add((idA, idB));
+    }
+    #endregion Collisions
 
     #region Update
     private void FixedUpdate()
@@ -196,6 +207,7 @@ public class CirclePhysics : MonoBehaviour
         float limRadius = limit ? limit.localScale.x / 2f : -1;
         Vector3 limPosition = limit ? limit.position : Vector3.zero;
 
+        collisions = new List<(int,int)>();
         for (int step = 0; step < substeps; step++)
         {
             PopulateGrid();
@@ -206,6 +218,7 @@ public class CirclePhysics : MonoBehaviour
         }
 
         UpdateTransform();
+        InvokeCollisions();
     }
 
     void PopulateGrid()
@@ -213,7 +226,7 @@ public class CirclePhysics : MonoBehaviour
         Grid.Clear();
 
         for (int i = 0; i < simulatedBodies.Count; i++)
-            if (!simulatedBodies[i].noClip)
+            if (!simulatedBodies[i].disableCollision)
                 Grid.Add(i, simulatedBodies[i].CurrentPosition);
     }
 
@@ -221,6 +234,24 @@ public class CirclePhysics : MonoBehaviour
     {
         foreach (var body in simulatedBodies)
             body.Acceleration += body.useGravity ? Gravity : Vector2.zero;
+    }
+
+    void CheckGrid()
+    {
+        for (int x = 1; x < Grid.Width - 1; x++)
+            for (int y = 1; y < Grid.Height - 1; y++)
+            {
+                Vector2Int coords = new Vector2Int(x, y);
+                int[] area = GetCollisionArea(coords, out int count);
+                var cell = Grid.GetCell(coords);
+                for (int i = 0; i <= cell.Index; i++)
+                {
+                    int idA = cell.bodies[i];
+                    for (int k = 0; k < count; k++)
+                        if (area[k] != idA)
+                            SolveCollision(idA, area[k]);
+                }
+            }
     }
 
     void EnforceLimit(float limRadius, Vector2 limPosition)
@@ -258,7 +289,24 @@ public class CirclePhysics : MonoBehaviour
         foreach (var body in simulatedBodies)
         {
             body.transform.localScale = Vector3.one * body.Radius * 2f;
-            body.transform.position = body.CurrentPosition;
+            body.transform.position = new Vector3(
+                body.CurrentPosition.x,
+                body.CurrentPosition.y,
+                body.transform.position.z);
+        }
+    }
+
+    void InvokeCollisions()
+    {
+        foreach(var col in collisions)
+        {
+            var A = simulatedBodies[col.Item1];
+            var B = simulatedBodies[col.Item2];
+
+            if(A.sendCollisionEvents) 
+                A.ReceiveCollision(new CircleCollision(A, B));
+            if(B.sendCollisionEvents)
+                B.ReceiveCollision(new CircleCollision(A, B));
         }
     }
     #endregion Update

@@ -198,6 +198,7 @@ MonoBehaviour:
   spawn: 0
   CurrentFocus: {fileID: 0}
   focusBaseColor: {r: 0, g: 0, b: 0, a: 0}
+  focusIsTrigger: 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
