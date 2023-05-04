@@ -41,6 +41,7 @@ public class CollisionGrid
     Cell[] cells;
     public int Width { get; private set; }
     public int Height { get; private set; }
+    public int Capacity { get; private set; }
     Vector2 offset = Vector2.zero;
     Vector2 maxPos;
     Vector2 _center = new Vector2(1,1);
@@ -72,10 +73,11 @@ public class CollisionGrid
         this.Height = Mathf.Max(1, height) + 1;
         this.Scale = scale;
         this.Center = center;
+        this.Capacity = capacity;
 
         cells = new Cell[Width * Height];
         for(int i = 0; i < cells.Length; i++)
-            cells[i] = new Cell(capacity);
+            cells[i] = new Cell(Capacity);
     }
 
     int GetIndex(Vector2Int position)

@@ -42,6 +42,18 @@ public class CircleBody : MonoBehaviour
         set { friction = Mathf.Clamp01(value); }
     }
 
+    MeshRenderer _renderer;
+    public MeshRenderer Renderer
+    {
+        get
+        {
+            if(!_renderer)
+                _renderer = GetComponent<MeshRenderer>();
+
+            return _renderer;
+        }
+    }
+
     public bool useGravity = true;
     public bool noClip = false;
 
