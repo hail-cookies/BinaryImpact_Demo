@@ -49,27 +49,28 @@ public class CirclePhysics : MonoBehaviour
     [Range(0.01f,1f)]
     public float collisionResponse = 0.6f;
     public Transform limit;
-    public int worldSize = 10;
-    public float gridScale = 1f;
     public int cellCapacity = 8;
 
     static float _dt;
     public static float DeltaTime { get { return _dt; } }
 
     public static CollisionGrid Grid { get; private set; }
+
+    static int[] area;
     private void Awake()
     {
-        gridScale = Mathf.Max(float.Epsilon, gridScale);
-        worldSize = (int)(worldSize / gridScale);
-        worldSize = Mathf.Max(1, worldSize);
-        
+        int worldSizeX = (int)limit.localScale.x + 2;
+        int worldSizeY = (int)limit.localScale.y + 2;
+
         Grid = new CollisionGrid(
-            worldSize, worldSize, gridScale, limit ? limit.position : transform.position, cellCapacity);
+            worldSizeX, worldSizeY, 1, limit ? limit.position : transform.position, cellCapacity);
+
+        area = new int[9 * cellCapacity];
     }
 
     private void OnDrawGizmos()
     {
-        if(Grid != null) 
+        if(Grid != null && !Application.isPlaying) 
             Grid.DrawGizmos();
     }
 
@@ -87,22 +88,22 @@ public class CirclePhysics : MonoBehaviour
     {
         coords.x = Mathf.Clamp(coords.x, 1, Grid.Width - 2);
         coords.y = Mathf.Clamp(coords.y, 1, Grid.Height - 2);
-        int[] result = new int[9 * Grid.Capacity];
+        
         count = 0;
         //Down
-        count = ReadCell(result, count, Grid.GetCell(coords + downLeft));
-        count = ReadCell(result, count, Grid.GetCell(coords + down));
-        count = ReadCell(result, count, Grid.GetCell(coords + downRight));
+        count = ReadCell(area, count, Grid.GetCell(coords + downLeft));
+        count = ReadCell(area, count, Grid.GetCell(coords + down));
+        count = ReadCell(area, count, Grid.GetCell(coords + downRight));
         //Center
-        count = ReadCell(result, count, Grid.GetCell(coords + left));
-        count = ReadCell(result, count, Grid.GetCell(coords));
-        count = ReadCell(result, count, Grid.GetCell(coords + right));
+        count = ReadCell(area, count, Grid.GetCell(coords + left));
+        count = ReadCell(area, count, Grid.GetCell(coords));
+        count = ReadCell(area, count, Grid.GetCell(coords + right));
         //Up
-        count = ReadCell(result, count, Grid.GetCell(coords + upLeft));
-        count = ReadCell(result, count, Grid.GetCell(coords + up));
-        count = ReadCell(result, count, Grid.GetCell(coords + upRight));
+        count = ReadCell(area, count, Grid.GetCell(coords + upLeft));
+        count = ReadCell(area, count, Grid.GetCell(coords + up));
+        count = ReadCell(area, count, Grid.GetCell(coords + upRight));
 
-        return result;
+        return area;
     }
 
     public static bool CheckPoint(Vector2 position, out CircleBody hit)
@@ -208,7 +209,7 @@ public class CirclePhysics : MonoBehaviour
     private void FixedUpdate()
     {
         _dt = Time.fixedDeltaTime / (float)substeps;
-        float limRadius = limit ? limit.localScale.x / 2f : -1;
+        Vector2 limScale = limit.localScale;
         Vector3 limPosition = limit ? limit.position : Vector3.zero;
 
         collisions = new List<(int,int, Vector2)>();
@@ -216,7 +217,7 @@ public class CirclePhysics : MonoBehaviour
         {
             PopulateGrid();
             ApplyGravity();
-            ApplyConstraints(limRadius, limPosition);
+            ApplyConstraints(limScale, limPosition);
             CheckGrid();
             UpdatePosition(_dt);
         }
@@ -261,22 +262,25 @@ public class CirclePhysics : MonoBehaviour
             }
     }
 
-    void ApplyConstraints(float limRadius, Vector2 limPosition)
+    void ApplyConstraints(Vector2 limScale, Vector2 limPosition)
     {
+        Vector2 halfScale = limScale * 0.5f;
+        Vector2 min = limPosition - halfScale;
+        Vector2 max = limPosition + halfScale;
+        
+
         foreach (var body in simulatedBodies)
         {
-            body.ApplyConstraints();
-
-            if (limRadius > 0 && !body.isTrigger)
+            if (!body.isTrigger)
             {
                 float radius = body.Radius;
-                Vector2 delta = body.CurrentPosition - limPosition;
-                float dist = delta.magnitude;
-                if (dist > limRadius - radius)
-                {
-                    body.CurrentPosition = limPosition + (delta / dist) * (limRadius - radius);
-                }
+                body.CurrentPosition.x =
+                    Mathf.Clamp(body.CurrentPosition.x, min.x + radius, max.x - radius);
+                body.CurrentPosition.y =
+                    Mathf.Clamp(body.CurrentPosition.y, min.y + radius, max.y - radius);
             }
+
+            body.ApplyConstraints();
         }
     }
 

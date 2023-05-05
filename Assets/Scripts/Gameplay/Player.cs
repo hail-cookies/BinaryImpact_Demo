@@ -48,7 +48,10 @@ public class Player : MonoBehaviour
         ToggleFocus(CurrentFocus, false);
 
         if (targetRail != null && body != null)
+        {
+            debug2.position = (Vector3)body.CurrentPosition - Vector3.forward;
             targetRail.Add(body);
+        }
     }
 
     private void LMouseDown(InputAction.CallbackContext obj)

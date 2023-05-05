@@ -23,6 +23,11 @@ public class RailExit : MonoBehaviour
 
     private void Awake()
     {
+        Inititalize();
+    }
+
+    protected virtual void Inititalize()
+    {
         body = GetComponent<CircleBody>();
         body.useGravity = false;
         body.isTrigger = true;

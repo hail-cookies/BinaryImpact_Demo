@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer), typeof(SplineComponent))]
 public class Rail : MonoBehaviour
 {
     public struct TrackedBody
@@ -21,14 +22,39 @@ public class Rail : MonoBehaviour
         }
     }
 
-    public SplineComponent Spline;
+    public Color color = Color.white;
     public float Speed = 1.0f;
     [Range(0f, 1f)]
-    public float trackingStrength = 0.3f;
+    public float dampener = 0.4f;
     public List<CircleBody> AddOnStart = new List<CircleBody>();
     List<TrackedBody> TrackedBodies = new List<TrackedBody>();
-
     List<(Vector2, Vector2, Vector2)> gizmoData = new List<(Vector2, Vector2, Vector2)>();
+
+    public float minProg = 0f;
+    LineRenderer _lineRenderer;
+    public LineRenderer LineRenderer
+    { 
+        get 
+        { 
+            if(_lineRenderer == null)
+                _lineRenderer = GetComponent<LineRenderer>();
+
+            return _lineRenderer; 
+        } 
+    }
+
+    SplineComponent _spline;
+    public SplineComponent Spline
+    {
+        get
+        {
+            if(_spline == null)
+                _spline = GetComponent<SplineComponent>();
+
+            return _spline;
+        }
+    }
+
     private void OnDrawGizmos()
     {
         foreach (var data in gizmoData)
@@ -46,57 +72,79 @@ public class Rail : MonoBehaviour
             Gizmos.DrawSphere(pos2, 0.01f);
             Gizmos.DrawLine(pos2, pos2 + nrm * 0.2f);
         }
+
+        float step = 1/20f;
+        Gizmos.color = color;
+        for(int i = 1; i <= 20; i++)
+        {
+            Gizmos.DrawLine(
+                Spline.SamplePoint(step * (i - 1)),
+                Spline.SamplePoint(step * i));
+        }
     }
 
     private void Start()
     {
         foreach(var body in AddOnStart)
             Add(body);
+
+        LineRenderer.material.color = color;
+        Vector3[] positions = new Vector3[201];
+        float step = 1f / 200f;
+        for(int i = 0; i < positions.Length; i++)
+            positions[i] = Spline.SamplePoint((float)i * step) + Vector3.forward * 0.5f;
+
+        LineRenderer.positionCount = positions.Length;
+        LineRenderer.SetPositions(positions);
+
+        minProg = Spline.spline.DistToProg(Game.Instance.c_bubbleSize);
     }
 
-    public bool useDampener = false;
     private void FixedUpdate()
     {
         gizmoData.Clear();
+        TrackedBodies.Sort(CompareProgress);
 
+        float dt = Time.fixedDeltaTime;
         for (int i = 0; i < TrackedBodies.Count; i++)
         {
             var tracked = TrackedBodies[i];
             var body = tracked.Body;
 
             float t = Spline.ProjectPoint(body.CurrentPosition);
-            t = Mathf.Clamp(t, 0.001f, 0.999f);
+            tracked.t = t;
 
             Vector2 dir = Spline.SampleDirection(t);
             Vector2 vel = dir * Speed;
 
-            bool hasContact = false;
-            if (body.HasContacts)
-            {
-                var contacts = body.GetContacts();
-                foreach (var contact in contacts)
-                {
-                    Vector2 n = contact.Normal * (contact.A == body ? -1 : 1);
-                    if (Vector2.Dot(vel, n) < 0)
-                    {
-                        hasContact = true;
-                        break;
-                    }
-                }
-            }
+            bool hasContact = TouchesNext(body.CurrentPosition, body.Radius, i);
 
             tracked.Dampener = Mathf.Clamp(
                 hasContact ? 
-                    tracked.Dampener * 0.8f : 
+                    tracked.Dampener * (1f - dampener) : 
                     tracked.Dampener + 0.05f, 
-                0.2f, 
+                0.1f, 
                 1f);
 
-            body.SetVelocity(vel * (useDampener ? tracked.Dampener : 1f));
+            body.SetVelocity(vel * tracked.Dampener);
             gizmoData.Add((body.CurrentPosition, vel, Vector2.zero));
             TrackedBodies[i] = tracked;
         }
     }
+
+    bool TouchesNext(Vector2 positon, float radius, int i)
+    {
+        int index = i + (Speed > 0 ? 1 : -1);
+        if (index > 0 && index < TrackedBodies.Count)
+            return CirclePhysics.OverlapCircle(
+                TrackedBodies[index].Body, 
+                positon, 
+                radius * 1.1f);
+
+        return false;
+    }
+
+    int CompareProgress(TrackedBody a, TrackedBody b) => a.t.CompareTo(b.t);
 
     public void Add(CircleBody body)
     {
@@ -111,7 +159,7 @@ public class Rail : MonoBehaviour
             //Add new body
             TrackedBodies.Add(new TrackedBody(body, t, key));
             body.OnApplyConstraints += ApplyConstraint;
-            body.CurrentPosition = Spline.SamplePoint(t);
+            body.CurrentPosition = body.transform.position = Spline.SamplePoint(t);
             body.SetVelocity(Vector2.zero);
         }
     }
@@ -131,8 +179,10 @@ public class Rail : MonoBehaviour
     private void ApplyConstraint(CircleBody body)
     {
         float t = Spline.ProjectPoint(body.CurrentPosition);
-        t = Mathf.Clamp(t, 0.005f, 0.999f);
-        body.CurrentPosition = Spline.SamplePoint(t);
+        t = Mathf.Clamp(t, minProg, 1 - minProg);
+        Vector2 delta = (Vector2)Spline.SamplePoint(t) - body.CurrentPosition;
+        body.CurrentPosition += delta;
+        body.AddVelocity(-delta / CirclePhysics.DeltaTime);
     }
 
     bool BodyClaimed(CircleBody body)
