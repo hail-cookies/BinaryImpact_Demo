@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,8 +47,8 @@ public class Player : MonoBehaviour
         var body = CurrentFocus;
         ToggleFocus(CurrentFocus, false);
 
-        if(body != null)
-            FindObjectOfType<Rail>().Add(body);
+        if (targetRail != null && body != null)
+            targetRail.Add(body);
     }
 
     private void LMouseDown(InputAction.CallbackContext obj)
@@ -74,6 +75,7 @@ public class Player : MonoBehaviour
         obj.Item1.name = "Phys " + spawnCount++;
     }
 
+    Rail targetRail;
     void DragFocus()
     {
         if(CurrentFocus== null) return;
@@ -81,10 +83,7 @@ public class Player : MonoBehaviour
         Vector2 mousePos = Camera.ScreenToWorldPoint(MousePosition);
         CurrentFocus.SetVelocity((mousePos - CurrentFocus.CurrentPosition) / Time.fixedDeltaTime);
 
-        var rail = FindObjectOfType<Rail>();
-        Vector3 pos = rail.Spline.SamplePoint(rail.Spline.ProjectPoint(mousePos));
-        pos -= Vector3.forward;
-        transform.position = pos;
+        targetRail = GetClosestRail(mousePos);
     }
 
     private void FixedUpdate()
@@ -123,14 +122,12 @@ public class Player : MonoBehaviour
             CurrentFocus = state ? body : null;
             focusBaseColor = state ? body.Renderer.material.color : focusBaseColor;
             body.Renderer.material.color = state ? Color.white : focusBaseColor;
-            body.isTrigger = state && focusIsTrigger;
+            body.disableCollision = state;
             body.transform.position =
                 new Vector3(
                     body.CurrentPosition.x,
                     body.CurrentPosition.y,
                     state ? -1 : 0);
-
-            body.SendCollisionEvents = state;
         }
     }
 
@@ -138,5 +135,35 @@ public class Player : MonoBehaviour
     {
         ToggleFocus(body, false);
         return true;
+    }
+
+    public Transform debug1, debug2;
+    public List<Rail> rails = new List<Rail>();
+    Rail GetClosestRail(Vector3 mousePos)
+    {
+        if (rails.Count == 0) 
+            return null;
+        mousePos.z = 0;
+
+        Vector3 pos = Vector3.zero;
+        Rail closestRail = null;
+        float closest = Mathf.Infinity;
+        foreach (var rail in rails)
+        {
+            var spline = rail.Spline;
+            Vector3 p = spline.SamplePoint(spline.ProjectPoint(mousePos));
+
+            float sqrDist = (p - mousePos).sqrMagnitude;
+            if (sqrDist < closest)
+            {
+                closest = sqrDist;
+                pos = p;
+                closestRail = rail;
+            }
+        }
+
+        debug1.position = pos - Vector3.forward;
+        debug2.position = mousePos - Vector3.forward;
+        return closestRail;
     }
 }

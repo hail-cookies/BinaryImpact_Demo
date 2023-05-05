@@ -46,6 +46,8 @@ public class CirclePhysics : MonoBehaviour
 
     public Vector2 Gravity = new Vector2(0, -9.81f);
     public int substeps = 8;
+    [Range(0.01f,1f)]
+    public float collisionResponse = 0.6f;
     public Transform limit;
     public int worldSize = 10;
     public float gridScale = 1f;
@@ -111,10 +113,13 @@ public class CirclePhysics : MonoBehaviour
         for(int i = 0; i < count; i++)
         {
             var body = simulatedBodies[area[i]];
-            if(OverlapCircle(body, position, 0.0001f))
+            if (!body.disableCollision && !body.isTrigger)
             {
-                hit = body;
-                return true;
+                if (OverlapCircle(body, position, 0.0001f))
+                {
+                    hit = body;
+                    return true;
+                }
             }
         }
 
@@ -164,7 +169,7 @@ public class CirclePhysics : MonoBehaviour
 
             if (!A.isTrigger && !B.isTrigger)
             {
-                float penetration = radius - dist;
+                float penetration = (radius - dist) * collisionResponse;
 
                 float mass = A.Mass + B.Mass;
                 float massRatio = A.Mass / mass;
@@ -262,7 +267,7 @@ public class CirclePhysics : MonoBehaviour
         {
             body.ApplyConstraints();
 
-            if (limRadius > 0)
+            if (limRadius > 0 && !body.isTrigger)
             {
                 float radius = body.Radius;
                 Vector2 delta = body.CurrentPosition - limPosition;
@@ -279,6 +284,9 @@ public class CirclePhysics : MonoBehaviour
     {
         foreach (var body in simulatedBodies)
         {
+            if (body.isTrigger)
+                continue;
+
             //Calculate velocity
             Vector2 velocity = body.CurrentPosition - body.LastPosition;
             //Update stored position

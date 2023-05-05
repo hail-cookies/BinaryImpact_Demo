@@ -79,6 +79,11 @@ public class CircleBody : MonoBehaviour
         CirclePhysics.RemoveBody(this);
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawSphere(transform.position, radius);
+    }
+
     public delegate void Constraint(CircleBody body);
     public event Constraint OnApplyConstraints;
     public void ApplyConstraints() => OnApplyConstraints?.Invoke(this);
