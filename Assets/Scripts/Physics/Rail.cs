@@ -10,12 +10,14 @@ public class Rail : MonoBehaviour
         public CircleBody Body;
         public float Dampener;
         public float t;
+        public readonly uint key;
 
-        public TrackedBody(CircleBody body, float t)
+        public TrackedBody(CircleBody body, float t, uint key)
         {
             this.Body = body;
             Dampener = 1;
             this.t = t;
+            this.key = key;
         }
     }
 
@@ -91,8 +93,6 @@ public class Rail : MonoBehaviour
                 1f);
 
             body.SetVelocity(vel * (useDampener ? tracked.Dampener : 1f));
-
-            body.Renderer.material.color = hasContact ? Color.red : Color.green;
             gizmoData.Add((body.CurrentPosition, vel, Vector2.zero));
             TrackedBodies[i] = tracked;
         }
@@ -100,12 +100,20 @@ public class Rail : MonoBehaviour
 
     public void Add(CircleBody body)
     {
+        //Check if body is already tracked
         foreach (var tracked in TrackedBodies)
             if (tracked.Body == body)
                 return;
-
-        TrackedBodies.Add(new TrackedBody(body, Spline.ProjectPoint(body.CurrentPosition)));
-        body.OnApplyConstraints += ApplyConstraint;
+        //Try to get ownership
+        if (body.Ownership.Claim(BodyClaimed, out uint key))
+        {
+            float t = Spline.ProjectPoint(body.CurrentPosition);
+            //Add new body
+            TrackedBodies.Add(new TrackedBody(body, t, key));
+            body.OnApplyConstraints += ApplyConstraint;
+            body.CurrentPosition = Spline.SamplePoint(t);
+            body.SetVelocity(Vector2.zero);
+        }
     }
 
     public void Remove(CircleBody body)
@@ -113,6 +121,7 @@ public class Rail : MonoBehaviour
         for(int i = 0; i < TrackedBodies.Count; i++)
             if (TrackedBodies[i].Body == body)
             {
+                body.Ownership.Release(TrackedBodies[i].key);
                 TrackedBodies.RemoveAt(i);
                 body.OnApplyConstraints -= ApplyConstraint;
                 break;
@@ -124,5 +133,11 @@ public class Rail : MonoBehaviour
         float t = Spline.ProjectPoint(body.CurrentPosition);
         t = Mathf.Clamp(t, 0.005f, 0.999f);
         body.CurrentPosition = Spline.SamplePoint(t);
+    }
+
+    bool BodyClaimed(CircleBody body)
+    {
+        Remove(body);
+        return true;
     }
 }

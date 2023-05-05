@@ -43,7 +43,11 @@ public class Player : MonoBehaviour
     private void LMouseUp(InputAction.CallbackContext obj)
     {
         lMouse = false;
+        var body = CurrentFocus;
         ToggleFocus(CurrentFocus, false);
+
+        if(body != null)
+            FindObjectOfType<Rail>().Add(body);
     }
 
     private void LMouseDown(InputAction.CallbackContext obj)
@@ -76,6 +80,11 @@ public class Player : MonoBehaviour
 
         Vector2 mousePos = Camera.ScreenToWorldPoint(MousePosition);
         CurrentFocus.SetVelocity((mousePos - CurrentFocus.CurrentPosition) / Time.fixedDeltaTime);
+
+        var rail = FindObjectOfType<Rail>();
+        Vector3 pos = rail.Spline.SamplePoint(rail.Spline.ProjectPoint(mousePos));
+        pos -= Vector3.forward;
+        transform.position = pos;
     }
 
     private void FixedUpdate()
@@ -98,22 +107,36 @@ public class Player : MonoBehaviour
         }
     }
 
+    uint ownershipKey = 0;
     public bool focusIsTrigger = true;   
     void ToggleFocus(CircleBody body, bool state)
     {
         if (!body)
             return;
 
-        CurrentFocus = state ? body : null;
-        focusBaseColor = state ? body.Renderer.material.color : focusBaseColor;
-        body.Renderer.material.color = state ? Color.white : focusBaseColor;
-        body.isTrigger = state && focusIsTrigger;
-        body.transform.position = 
-            new Vector3(
-                body.CurrentPosition.x,
-                body.CurrentPosition.y,
-                state ? -1 : 0);
+        bool legal = state ? body.Ownership.Claim(FocusClaimed, out ownershipKey) : true;
 
-        body.SendCollisionEvents = state;
+        if (legal)
+        {
+            if (!state) body.Ownership.Release(ownershipKey);
+
+            CurrentFocus = state ? body : null;
+            focusBaseColor = state ? body.Renderer.material.color : focusBaseColor;
+            body.Renderer.material.color = state ? Color.white : focusBaseColor;
+            body.isTrigger = state && focusIsTrigger;
+            body.transform.position =
+                new Vector3(
+                    body.CurrentPosition.x,
+                    body.CurrentPosition.y,
+                    state ? -1 : 0);
+
+            body.SendCollisionEvents = state;
+        }
+    }
+
+    bool FocusClaimed(CircleBody body)
+    {
+        ToggleFocus(body, false);
+        return true;
     }
 }

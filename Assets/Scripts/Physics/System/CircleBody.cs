@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,6 +52,18 @@ public class CircleBody : MonoBehaviour
         }
     }
 
+    Ownership<CircleBody> _ownership;
+    public Ownership<CircleBody> Ownership
+    {
+        get
+        {
+            if (_ownership == null)
+                _ownership = new Ownership<CircleBody>(this);
+
+            return _ownership;
+        }
+    }
+
     public bool useGravity = true;
     public bool disableCollision = false;
     public bool isTrigger = false;
@@ -73,6 +86,7 @@ public class CircleBody : MonoBehaviour
     public delegate void CollisionEvent(CircleCollision collision);
     public event CollisionEvent OnCollision;
     public bool SendCollisionEvents = false;
+
     public bool HasContacts { get => contacts.Count > 0; }
     List<CircleCollision> contacts = new List<CircleCollision>();
 
