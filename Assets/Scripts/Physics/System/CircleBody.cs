@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CircleBody : MonoBehaviour
@@ -12,10 +13,6 @@ public class CircleBody : MonoBehaviour
     public Vector2 Velocity
     {
         get { return (CurrentPosition - LastPosition) / CirclePhysics.DeltaTime; }
-        set
-        {
-            LastPosition = CurrentPosition - value * CirclePhysics.DeltaTime;
-        }
     }
 
     [SerializeField, Min(float.Epsilon)]
@@ -69,12 +66,65 @@ public class CircleBody : MonoBehaviour
         CirclePhysics.RemoveBody(this);
     }
 
+    public delegate void Constraint(CircleBody body);
+    public event Constraint OnApplyConstraints;
+    public void ApplyConstraints() => OnApplyConstraints?.Invoke(this);
+
     public delegate void CollisionEvent(CircleCollision collision);
     public event CollisionEvent OnCollision;
-    public bool sendCollisionEvents = false;
+    public bool SendCollisionEvents = false;
+    public bool HasContacts { get => contacts.Count > 0; }
+    List<CircleCollision> contacts = new List<CircleCollision>();
+
+    void AddContact(CircleCollision contact)
+    {
+        int index = -1;
+        for(int i = 0; i < contacts.Count; i++)
+        {
+            CircleCollision col = contacts[i];
+            if ((col.A == contact.A && col.B == contact.B) ||
+                (col.A == contact.B && col.B == contact.A))
+            {
+                index = i; break;
+            }
+        }
+
+        if(index > -1)
+            contacts[index] = contact;
+        else
+            contacts.Add(contact);
+    }
+
+    public void UpdateContacts()
+    {
+        float time = Time.time;
+        for (int i = 0; i < contacts.Count; i++)
+        {
+            if (time - contacts[i].Created > Time.fixedDeltaTime * 2)
+            {
+                contacts.RemoveAt(i);
+                i -= 1;
+            }
+        }
+    }
+
+    public CircleCollision[] GetContacts() => contacts.ToArray();
+
     public void ReceiveCollision(CircleCollision collision)
     {
-        if(!sendCollisionEvents) return;
+        AddContact(collision);
+
+        if(!SendCollisionEvents) return;
         OnCollision?.Invoke(collision);
+    }
+
+    public void SetVelocity(Vector2 velocity)
+    {
+        LastPosition = CurrentPosition - velocity * CirclePhysics.DeltaTime;
+    }
+
+    public void AddVelocity(Vector2 velocity)
+    {
+        LastPosition -= velocity * CirclePhysics.DeltaTime;
     }
 }

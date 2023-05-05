@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
 
         var obj = ObjectPool.Create<CircleBody>(prefab, (Vector2)transform.position, Quaternion.identity, null);
         obj.Item2.Radius = radius;
-        obj.Item2.Velocity = spawnVelocity;
+        obj.Item2.SetVelocity(spawnVelocity);
         obj.Item1.GetComponent<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV(0, 1, 0, 1, 0.3f, 1);
         obj.Item1.name = "Phys " + spawnCount++;
     }
@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
         if(CurrentFocus== null) return;
 
         Vector2 mousePos = Camera.ScreenToWorldPoint(MousePosition);
-        CurrentFocus.Velocity = (mousePos - CurrentFocus.CurrentPosition) / Time.fixedDeltaTime;
+        CurrentFocus.SetVelocity((mousePos - CurrentFocus.CurrentPosition) / Time.fixedDeltaTime);
     }
 
     private void FixedUpdate()
@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
     void Getfocus()
     {
         Vector2 mousePos = Camera.ScreenToWorldPoint(MousePosition);
-        CirclePhysics.RayCast(mousePos, out var newFocus);
+        CirclePhysics.CheckPoint(mousePos, out var newFocus);
 
         if(newFocus != CurrentFocus)
         {
@@ -114,6 +114,6 @@ public class Player : MonoBehaviour
                 body.CurrentPosition.y,
                 state ? -1 : 0);
 
-        body.sendCollisionEvents = state;
+        body.SendCollisionEvents = state;
     }
 }
