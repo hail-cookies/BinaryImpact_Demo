@@ -31,6 +31,15 @@ public class Rail : MonoBehaviour
     List<(Vector2, Vector2, Vector2)> gizmoData = new List<(Vector2, Vector2, Vector2)>();
 
     public float minProg = 0f;
+
+    public bool HasSpace
+    {
+        get
+        {
+            return CirclePhysics.CheckCircle(SamplePoint(0), Game.Instance.c_bubbleSize, out var hit);
+        }
+    }
+
     LineRenderer _lineRenderer;
     public LineRenderer LineRenderer
     { 
@@ -44,7 +53,7 @@ public class Rail : MonoBehaviour
     }
 
     SplineComponent _spline;
-    public SplineComponent Spline
+    protected SplineComponent Spline
     {
         get
         {
@@ -54,6 +63,11 @@ public class Rail : MonoBehaviour
             return _spline;
         }
     }
+
+    public float ProjectPoint(Vector2 point) => ClampProgress(Spline.ProjectPoint(point));
+    public Vector3 SamplePoint(float t) => Spline.SamplePoint(ClampProgress(t));
+    public Vector3 SampleDirection(float t) => Spline.SampleDirection(ClampProgress(t));
+    public float ClampProgress(float t) => Mathf.Clamp(t, minProg, 1f - minProg);
 
     private void OnDrawGizmos()
     {
@@ -85,7 +99,9 @@ public class Rail : MonoBehaviour
 
     private void Start()
     {
-        foreach(var body in AddOnStart)
+        minProg = Spline.spline.DistToProg(Game.Instance.c_bubbleSize);
+
+        foreach (var body in AddOnStart)
             Add(body);
 
         LineRenderer.material.color = color;
@@ -96,8 +112,6 @@ public class Rail : MonoBehaviour
 
         LineRenderer.positionCount = positions.Length;
         LineRenderer.SetPositions(positions);
-
-        minProg = Spline.spline.DistToProg(Game.Instance.c_bubbleSize);
     }
 
     private void FixedUpdate()
@@ -111,10 +125,10 @@ public class Rail : MonoBehaviour
             var tracked = TrackedBodies[i];
             var body = tracked.Body;
 
-            float t = Spline.ProjectPoint(body.CurrentPosition);
+            float t = ProjectPoint(body.CurrentPosition);
             tracked.t = t;
 
-            Vector2 dir = Spline.SampleDirection(t);
+            Vector2 dir = SampleDirection(t);
             Vector2 vel = dir * Speed;
 
             bool hasContact = TouchesNext(body.CurrentPosition, body.Radius, i);
@@ -155,11 +169,11 @@ public class Rail : MonoBehaviour
         //Try to get ownership
         if (body.Ownership.Claim(BodyClaimed, out uint key))
         {
-            float t = Spline.ProjectPoint(body.CurrentPosition);
+            float t = ProjectPoint(body.CurrentPosition);
             //Add new body
             TrackedBodies.Add(new TrackedBody(body, t, key));
             body.OnApplyConstraints += ApplyConstraint;
-            body.CurrentPosition = body.transform.position = Spline.SamplePoint(t);
+            body.CurrentPosition = body.transform.position = SamplePoint(t);
             body.SetVelocity(Vector2.zero);
         }
     }
@@ -178,9 +192,9 @@ public class Rail : MonoBehaviour
 
     private void ApplyConstraint(CircleBody body)
     {
-        float t = Spline.ProjectPoint(body.CurrentPosition);
+        float t = ProjectPoint(body.CurrentPosition);
         t = Mathf.Clamp(t, minProg, 1 - minProg);
-        Vector2 delta = (Vector2)Spline.SamplePoint(t) - body.CurrentPosition;
+        Vector2 delta = (Vector2)SamplePoint(t) - body.CurrentPosition;
         body.CurrentPosition += delta;
         body.AddVelocity(-delta / CirclePhysics.DeltaTime);
     }

@@ -6,10 +6,6 @@ public class Player : MonoBehaviour
 {
     public InputActionReference a_lMouse, a_mousePosition;
     public GameObject prefab;
-    public float radius = 0.1f;
-    public float spawnRate = 0.1f;
-    public Vector2 spawnVelocity = Vector2.right;
-    public bool spawn = true;
 
     static Camera _cam;
     public static Camera Camera
@@ -60,24 +56,6 @@ public class Player : MonoBehaviour
         Getfocus();
     }
 
-    float lastSpawn = 0;
-    int spawnCount = 0;
-    private void Spawn()
-    {
-        if (!spawn) return;
-
-        float time = Time.time;
-        if (time - lastSpawn < spawnRate)
-            return;
-        lastSpawn = time;
-
-        var obj = ObjectPool.Create<CircleBody>(prefab, (Vector2)transform.position, Quaternion.identity, null);
-        obj.Item2.Radius = radius;
-        obj.Item2.SetVelocity(spawnVelocity);
-        obj.Item1.GetComponent<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV(0, 1, 0, 1, 0.3f, 1);
-        obj.Item1.name = "Phys " + spawnCount++;
-    }
-
     Rail targetRail;
     void DragFocus()
     {
@@ -91,7 +69,6 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Spawn();
         DragFocus();
     }
 
@@ -153,8 +130,7 @@ public class Player : MonoBehaviour
         float closest = Mathf.Infinity;
         foreach (var rail in rails)
         {
-            var spline = rail.Spline;
-            Vector3 p = spline.SamplePoint(spline.ProjectPoint(mousePos));
+            Vector3 p = rail.SamplePoint(rail.ProjectPoint(mousePos));
 
             float sqrDist = (p - mousePos).sqrMagnitude;
             if (sqrDist < closest)

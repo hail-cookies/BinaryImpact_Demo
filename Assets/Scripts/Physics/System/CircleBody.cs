@@ -101,8 +101,7 @@ public class CircleBody : MonoBehaviour
         for(int i = 0; i < contacts.Count; i++)
         {
             CircleCollision col = contacts[i];
-            if ((col.A == contact.A && col.B == contact.B) ||
-                (col.A == contact.B && col.B == contact.A))
+            if ((col.Self == contact.Self && col.Other == contact.Other))
             {
                 index = i; break;
             }
@@ -129,8 +128,14 @@ public class CircleBody : MonoBehaviour
 
     public CircleCollision[] GetContacts() => contacts.ToArray();
 
-    public void ReceiveCollision(CircleCollision collision)
+    public void ReceiveCollision(CircleBody A, CircleBody B, Vector2 n, float time)
     {
+        bool isA = A == this;
+        CircleCollision collision = new CircleCollision(
+            isA ? A : B,
+            isA ? B : A,
+            n, time);
+
         AddContact(collision);
 
         if(!SendCollisionEvents) return;

@@ -106,7 +106,8 @@ public class CirclePhysics : MonoBehaviour
         return area;
     }
 
-    public static bool CheckPoint(Vector2 position, out CircleBody hit)
+    public static bool CheckPoint(Vector2 position, out CircleBody hit) => CheckCircle(position, 0.0001f, out hit);
+    public static bool CheckCircle(Vector2 position, float radius, out CircleBody hit)
     {
         hit = null;
         int[] area = GetCollisionArea(Grid.Discretize(position), true, out int count);
@@ -116,7 +117,7 @@ public class CirclePhysics : MonoBehaviour
             var body = simulatedBodies[area[i]];
             if (!body.disableCollision && !body.isTrigger)
             {
-                if (OverlapCircle(body, position, 0.0001f))
+                if (OverlapCircle(body, position, radius))
                 {
                     hit = body;
                     return true;
@@ -317,14 +318,16 @@ public class CirclePhysics : MonoBehaviour
     void InvokeCollisions()
     {
         float time = Time.time;
+        List<CircleBody> bodies = new List<CircleBody>();
+        bodies.AddRange(simulatedBodies);
         foreach(var col in collisions)
         {
-            var A = simulatedBodies[col.Item1];
-            var B = simulatedBodies[col.Item2];
+            var A = bodies[col.Item1];
+            var B = bodies[col.Item2];
             var n = col.Item3.normalized;
 
-            A.ReceiveCollision(new CircleCollision(A, B, n, time));
-            B.ReceiveCollision(new CircleCollision(A, B, n, time));
+            A.ReceiveCollision(A, B, n, time);
+            B.ReceiveCollision(A, B, n, time);
         }
     }
     #endregion Update

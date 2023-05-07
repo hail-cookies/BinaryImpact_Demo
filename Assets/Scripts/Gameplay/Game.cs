@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -23,6 +22,7 @@ public class Game : MonoBehaviour
 
     public Rail supply;
     public List<Rail> rails = new List<Rail>();
+    public List<RailExit> sinks = new List<RailExit>();
 
     public List<GameObject> availablePrefabs = new List<GameObject>();
     public List<GameObject> startingPool = new List<GameObject>();
@@ -48,6 +48,14 @@ public class Game : MonoBehaviour
         }
 
         spawnPool.AddRange(startingPool);
+
+        foreach (var sink in sinks)
+            sink.Body.OnCollision += BubbleEnteredSink;
+    }
+
+    private void BubbleEnteredSink(CircleCollision collision)
+    {
+        ObjectPool.Destroy(collision.Other.gameObject);
     }
 
     private void Update()
@@ -91,6 +99,7 @@ public class Game : MonoBehaviour
         var created = ObjectPool.Create<Bubble>(selected).Item2;
         var body = created.Body;
         created.transform.localScale = Vector3.one * 2f * c_bubbleSize;
+        body.CurrentPosition = supply.SamplePoint(0);
         supply.Add(body);
         body.Radius = c_bubbleSize;
     }

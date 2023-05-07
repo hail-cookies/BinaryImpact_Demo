@@ -9,10 +9,11 @@ public class RailExit : MonoBehaviour
     public bool tethered = true;
     public BubbleType filter;
     protected CircleBody body;
+    public CircleBody Body { get { return body; } }
 
     private void OnValidate()
     {
-        if(rail == null)
+        if(rail == null && transform.parent)
             rail = transform.parent.GetComponent<Rail>();
 
         if(rail)
@@ -38,21 +39,21 @@ public class RailExit : MonoBehaviour
 
     private void Update()
     {
-        UpdatePosition();
+        if(rail)
+            UpdatePosition();
     }
 
     void UpdatePosition()
     {
         if(tethered) 
-            transform.position = rail.Spline.SamplePoint(t);
+            transform.position = rail.SamplePoint(t);
     }
 
     protected virtual void OnCollision(CircleCollision collision)
     {
-        var other = collision.A != body ? collision.A : collision.B;
-        if (Bubble.TryGetBubble(other.gameObject, out var bubble))
+        if (Bubble.TryGetBubble(collision.Other.gameObject, out var bubble))
             if(CheckFilter(bubble))
-                ProcessCollision(other, bubble, collision);
+                ProcessCollision(collision.Other, bubble, collision);
     }
 
     protected virtual bool CheckFilter(Bubble bubble)
@@ -62,7 +63,11 @@ public class RailExit : MonoBehaviour
 
     protected virtual void ProcessCollision(CircleBody other, Bubble bubble, CircleCollision collision)
     {
-        rail.Remove(other);
-        other.useGravity = true;
+        if (rail)
+        {
+            rail.Remove(other);
+            other.useGravity = true;
+            other.SetVelocity(other.Velocity.Rotate(Random.Range(-1,1)));
+        }
     }
 }

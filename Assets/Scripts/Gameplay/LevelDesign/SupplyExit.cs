@@ -23,11 +23,20 @@ public class SupplyExit : RailExit
             used.Clear();
         }
 
-        int index = Random.Range(0, available.Count);
-        var selected = available[index];
-        available.RemoveAt(index);
-        used.Add(selected);
+        for(int i = 0; i < available.Count; i++)
+        {
+            int index = Random.Range(0, available.Count);
+            var selected = available[index];
+            available.RemoveAt(index);
+            used.Add(selected);
 
-        selected.Add(other);
+            if (selected.HasSpace)
+            {
+                selected.Add(other);
+                break;
+            }
+            else
+                i--;
+        }
     }
 }
