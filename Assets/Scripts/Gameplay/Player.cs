@@ -43,10 +43,16 @@ public class Player : MonoBehaviour
         var body = CurrentFocus;
         ToggleFocus(CurrentFocus, false);
 
-        if (targetRail != null && body != null)
+        if (body != null)
         {
-            debug2.position = (Vector3)body.CurrentPosition - Vector3.forward;
-            targetRail.Add(body);
+            if (targetRail != null && targetRail.HasSpace)
+            {
+                debug2.position = (Vector3)body.CurrentPosition - Vector3.forward;
+                body.CurrentPosition = targetRail.SamplePoint(0);
+                targetRail.Add(body);
+            }
+            else
+                Game.Lose();
         }
     }
 
@@ -130,6 +136,9 @@ public class Player : MonoBehaviour
         float closest = Mathf.Infinity;
         foreach (var rail in rails)
         {
+            if (!rail.HasSpace)
+                continue;
+
             Vector3 p = rail.SamplePoint(rail.ProjectPoint(mousePos));
 
             float sqrDist = (p - mousePos).sqrMagnitude;

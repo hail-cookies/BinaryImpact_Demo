@@ -15,7 +15,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    public float c_bubbleSize = 0.5f;
+    public float c_bubbleRadius = 0.5f;
     public float c_supplySpeed = 5f;
     public float c_railSpeed = 5f;
     public float c_spawnInterval = 1f;
@@ -31,7 +31,7 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
-        float lineWidth = c_bubbleSize * 2.1f;
+        float lineWidth = c_bubbleRadius * 2.1f;
         supply.LineRenderer.widthCurve = 
             new AnimationCurve(new Keyframe[] { 
                 new Keyframe(0, 1), 
@@ -85,6 +85,12 @@ public class Game : MonoBehaviour
 
     void CreateBubble()
     {
+        if (!supply.HasSpace)
+        {
+            Lose();
+            return;
+        }
+
         if(spawnPool.Count == 0)
         {
             spawnPool.AddRange(usedPool);
@@ -98,9 +104,14 @@ public class Game : MonoBehaviour
 
         var created = ObjectPool.Create<Bubble>(selected).Item2;
         var body = created.Body;
-        created.transform.localScale = Vector3.one * 2f * c_bubbleSize;
+        created.transform.localScale = Vector3.one * 2f * c_bubbleRadius;
         body.CurrentPosition = supply.SamplePoint(0);
         supply.Add(body);
-        body.Radius = c_bubbleSize;
+        body.Radius = c_bubbleRadius;
+    }
+
+    public static void Lose()
+    {
+        Debug.Log("LOSE");
     }
 }

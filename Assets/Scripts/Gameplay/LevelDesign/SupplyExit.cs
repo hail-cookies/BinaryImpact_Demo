@@ -15,28 +15,28 @@ public class SupplyExit : RailExit
 
     protected override void ProcessCollision(CircleBody other, Bubble bubble, CircleCollision collision)
     {
-        rail.Remove(other);
-
         if(available.Count == 0)
         {
             available.AddRange(used);
             used.Clear();
         }
 
-        for(int i = 0; i < available.Count; i++)
+        while(available.Count > 0)
         {
+            //Get random target rail
             int index = Random.Range(0, available.Count);
             var selected = available[index];
+            //Mark rail as used
             available.RemoveAt(index);
             used.Add(selected);
-
+            //Check if rail has space
             if (selected.HasSpace)
             {
+                //Transfer bubble
+                rail.Remove(other);
                 selected.Add(other);
                 break;
             }
-            else
-                i--;
         }
     }
 }

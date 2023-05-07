@@ -2,6 +2,7 @@ using CustomVR;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(LineRenderer), typeof(SplineComponent))]
 public class Rail : MonoBehaviour
@@ -30,13 +31,14 @@ public class Rail : MonoBehaviour
     List<TrackedBody> TrackedBodies = new List<TrackedBody>();
     List<(Vector2, Vector2, Vector2)> gizmoData = new List<(Vector2, Vector2, Vector2)>();
 
-    public float minProg = 0f;
+    float minProg = 0f;
 
     public bool HasSpace
     {
         get
         {
-            return CirclePhysics.CheckCircle(SamplePoint(0), Game.Instance.c_bubbleSize, out var hit);
+            float bubbleSize = 2f * Game.Instance.c_bubbleRadius;
+            return (TrackedBodies.Count + 1) * bubbleSize < Spline.Length;
         }
     }
 
@@ -99,7 +101,7 @@ public class Rail : MonoBehaviour
 
     private void Start()
     {
-        minProg = Spline.spline.DistToProg(Game.Instance.c_bubbleSize);
+        minProg = Spline.spline.DistToProg(Game.Instance.c_bubbleRadius);
 
         foreach (var body in AddOnStart)
             Add(body);
@@ -137,7 +139,7 @@ public class Rail : MonoBehaviour
                 hasContact ? 
                     tracked.Dampener * (1f - dampener) : 
                     tracked.Dampener + 0.05f, 
-                0.1f, 
+                0f, 
                 1f);
 
             body.SetVelocity(vel * tracked.Dampener);
