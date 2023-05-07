@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
                 targetRail.Add(body);
             }
             else
-                Game.Lose();
+                Game.Lose("Cannot drop off bubble!");
         }
     }
 

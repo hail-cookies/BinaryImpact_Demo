@@ -241,8 +241,6 @@ MonoBehaviour:
   - {fileID: 1218117048}
   - {fileID: 1709751505}
   - {fileID: 1069413581}
-  - {fileID: 227305184}
-  - {fileID: 227305184}
 --- !u!114 &214212091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,10 +253,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8af6b657f150d846ab3558fa565e1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  c_bubbleSize: 0.3
+  c_bubbleRadius: 0.3
   c_supplySpeed: 5
   c_railSpeed: 5
-  c_spawnInterval: 2
+  c_spawnInterval: 0.5
   supply: {fileID: 227305184}
   rails:
   - {fileID: 1645201296}
@@ -316,9 +314,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 1, g: 1, b: 1, a: 1}
   Speed: 1
-  dampener: 0.9
+  dampener: 0.8
   AddOnStart: []
-  minProg: 0
 --- !u!114 &227305185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -533,7 +530,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.1
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -723,7 +720,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.5
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -909,7 +906,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.5
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -980,7 +977,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.1
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -1235,7 +1232,6 @@ MonoBehaviour:
   Speed: 1
   dampener: 0.4
   AddOnStart: []
-  minProg: 0
 --- !u!114 &1069413582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1438,7 +1434,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.1
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -1478,7 +1474,6 @@ MonoBehaviour:
   Speed: 1
   dampener: 0.4
   AddOnStart: []
-  minProg: 0
 --- !u!114 &1218117049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1798,7 +1793,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.1
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -1851,7 +1846,7 @@ MonoBehaviour:
   rail: {fileID: 227305184}
   t: 1
   tethered: 1
-  filter: 31
+  filter: 0
   rails:
   - {fileID: 1645201296}
   - {fileID: 1218117048}
@@ -1874,7 +1869,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.5
-  friction: 0.01
+  _restitution: 0.9
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
@@ -1914,7 +1909,6 @@ MonoBehaviour:
   Speed: 1
   dampener: 0.4
   AddOnStart: []
-  minProg: 0
 --- !u!114 &1645201297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,7 +2080,6 @@ MonoBehaviour:
   Speed: 1
   dampener: 0.4
   AddOnStart: []
-  minProg: 0
 --- !u!114 &1709751506
 MonoBehaviour:
   m_ObjectHideFlags: 0

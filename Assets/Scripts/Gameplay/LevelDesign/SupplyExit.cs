@@ -17,6 +17,13 @@ public class SupplyExit : RailExit
     {
         if(available.Count == 0)
         {
+            foreach(Rail rail in used)
+                if(!rail.HasSpace)
+                {
+                    Game.Lose("All lanes are full!");
+                    return;
+                }
+
             available.AddRange(used);
             used.Clear();
         }

@@ -33,11 +33,11 @@ public class CircleBody : MonoBehaviour
     }
 
     [SerializeField, Range(0,1)]
-    float friction = 0.01f;
-    public float Friction
+    float _restitution = 0.9f;
+    public float Restitution
     {
-        get { return friction; }
-        set { friction = Mathf.Clamp01(value); }
+        get { return _restitution; }
+        set { _restitution = Mathf.Clamp01(value); }
     }
 
     MeshRenderer _renderer;

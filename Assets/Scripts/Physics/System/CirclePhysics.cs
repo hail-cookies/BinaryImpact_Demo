@@ -176,8 +176,13 @@ public class CirclePhysics : MonoBehaviour
                 float mass = A.Mass + B.Mass;
                 float massRatio = A.Mass / mass;
 
-                A.CurrentPosition += massRatio * penetration * normal;
+                Vector2 displacement = massRatio * penetration * normal;
+                A.CurrentPosition += displacement;
+                A.AddVelocity(-((1f - A.Restitution) * displacement) / DeltaTime);
+
+                displacement = (1f - massRatio) * penetration * normal;
                 B.CurrentPosition -= (1f - massRatio) * penetration * normal;
+                B.AddVelocity(((1f - B.Restitution) * displacement) / DeltaTime);
             }
 
             AddCollision(idA, idB, normal);

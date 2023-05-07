@@ -87,7 +87,7 @@ public class Game : MonoBehaviour
     {
         if (!supply.HasSpace)
         {
-            Lose();
+            Lose("Cannot spawn new bubbles!");
             return;
         }
 
@@ -110,8 +110,8 @@ public class Game : MonoBehaviour
         body.Radius = c_bubbleRadius;
     }
 
-    public static void Lose()
+    public static void Lose(string msg)
     {
-        Debug.Log("LOSE");
+        Debug.Log("DEFEAT! " + msg);
     }
 }

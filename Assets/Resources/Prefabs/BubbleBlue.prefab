@@ -102,7 +102,7 @@ MonoBehaviour:
   Acceleration: {x: 0, y: 0}
   mass: 1
   radius: 0.5
-  friction: 0.01
+  _restitution: 1
   useGravity: 1
   disableCollision: 0
   isTrigger: 0
