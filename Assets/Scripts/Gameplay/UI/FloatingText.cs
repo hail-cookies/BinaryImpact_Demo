@@ -14,6 +14,7 @@ public class FloatingText : MonoBehaviour
     public float fadeDelay;
     public float fadeTime;
     public float created;
+    public bool selfDestruct;
 
     TextMeshProUGUI _text;
     public TextMeshProUGUI Text
@@ -31,6 +32,7 @@ public class FloatingText : MonoBehaviour
         Vector2 position, 
         Vector2 velocity, 
         Vector2 acceleration, 
+        bool selfDestruct,
         float lifeTime,
         float fadeDelay,
         float fadeTime, 
@@ -42,7 +44,11 @@ public class FloatingText : MonoBehaviour
             prefab = Resources.Load("Prefabs/FloatingText") as GameObject;
 
         var created = ObjectPool.Create<FloatingText>(prefab);
-        
+
+        Vector3 displacement = position + velocity;
+        position = Game.Camera.WorldToScreenPoint(position);
+        velocity = Game.Camera.WorldToScreenPoint(displacement) - (Vector3)position;
+
         var floating = created.Item2;
         floating.velocity = velocity;
         floating.acceleration = acceleration;
@@ -50,9 +56,9 @@ public class FloatingText : MonoBehaviour
         floating.fadeDelay = Mathf.Max(0, fadeDelay);
         floating.fadeTime = fadeTime;
         floating.created = Time.time;
+        floating.selfDestruct = selfDestruct;
 
         var text = floating.Text;
-        position = Game.Camera.WorldToScreenPoint(position);
         text.rectTransform.SetParent(UI.Canvas.transform);
         text.rectTransform.position = position;
         text.color = color;
@@ -66,10 +72,10 @@ public class FloatingText : MonoBehaviour
     private void Update()
     {
         float time = Time.time;
-        float delta = time - created;
+        float elapsed = time - created;
 
-        CheckStatus(delta);
-        Fade(delta);
+        CheckStatus(elapsed);
+        Fade(elapsed);
         UpdatePosition();
     }
 
@@ -84,18 +90,18 @@ public class FloatingText : MonoBehaviour
         active.Remove(this);
     }
 
-    void CheckStatus(float delta)
+    void CheckStatus(float elapsed)
     {
-        if (delta > lifeTime)
+        if (elapsed > lifeTime && selfDestruct)
             ObjectPool.Destroy(gameObject);
     }
 
-    void Fade(float delta)
+    void Fade(float elapsed)
     {
-        if (delta > fadeDelay)
+        if (elapsed > fadeDelay)
         {
             Color c = Text.color;
-            c.a = (delta - fadeDelay) / fadeTime;
+            c.a = fadeTime == 0 ? 0 : Mathf.Clamp01(1f - ((elapsed - fadeDelay) / fadeTime));
             Text.color = c;
         }
     }
@@ -105,5 +111,10 @@ public class FloatingText : MonoBehaviour
         float dt = Time.deltaTime;
         velocity += acceleration * dt;
         Text.rectTransform.position += (Vector3)(velocity * dt);
+    }
+
+    public void Destroy()
+    {
+        ObjectPool.Destroy(gameObject);
     }
 }

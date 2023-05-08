@@ -8,10 +8,19 @@ public class UI : MonoBehaviour
     {
         get
         {
-            if(_canvas == null)
-                _canvas = 
-                    GameObject.Instantiate(Resources.Load("Prefabs/UI")).
-                    GetComponent<Canvas>();
+            if (_canvas == null)
+            {
+                if(Instance.transform.childCount > 0)
+                    _canvas = Instance.transform.GetChild(0).GetComponent<Canvas>();
+
+                if (_canvas == null)
+                {
+                    _canvas =
+                        GameObject.Instantiate(Resources.Load("Prefabs/UI")).
+                        GetComponent<Canvas>();
+                    _canvas.transform.SetParent(Instance.transform);
+                }
+            }
 
             return _canvas;
         }

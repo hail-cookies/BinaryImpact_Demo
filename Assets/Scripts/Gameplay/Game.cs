@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -33,6 +34,7 @@ public class Game : MonoBehaviour
     public float c_spawnInterval = 1f;
     public float c_comboDuration = 0.3f;
 
+    public TextMeshProUGUI scoreDisplay;
     public Rail supply;
     public List<Rail> rails = new List<Rail>();
     public List<RailExit> sinks = new List<RailExit>();
@@ -77,6 +79,8 @@ public class Game : MonoBehaviour
         float dt = Time.deltaTime;
         UpdateRails();
         Spawn(t);
+
+        scoreDisplay.text = Score.Current + "";
     }
 
     void UpdateRails()

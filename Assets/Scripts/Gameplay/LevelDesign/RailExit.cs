@@ -76,8 +76,11 @@ public class RailExit : MonoBehaviour
         {
             if (rail.Remove(other))
             {
+                float randomDeviation = Random.Range(-3, 3);
+                randomDeviation += randomDeviation < 0 ? -0.2f : 0.2f;
+
                 other.useGravity = true;
-                other.SetVelocity(other.Velocity.Rotate(Random.Range(-1, 1)));
+                other.SetVelocity(other.Velocity.Rotate(randomDeviation));
 
                 if (canScore)
                     Score.Add(gameObject, transform.position, bubble);
