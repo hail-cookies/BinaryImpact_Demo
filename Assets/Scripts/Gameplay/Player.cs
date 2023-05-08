@@ -7,18 +7,6 @@ public class Player : MonoBehaviour
     public InputActionReference a_lMouse, a_mousePosition;
     public GameObject prefab;
 
-    static Camera _cam;
-    public static Camera Camera
-    {
-        get
-        {
-            if(!_cam)
-                _cam = Camera.main;
-
-            return _cam;
-        }
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -67,7 +55,7 @@ public class Player : MonoBehaviour
     {
         if(CurrentFocus== null) return;
 
-        Vector2 mousePos = Camera.ScreenToWorldPoint(MousePosition);
+        Vector2 mousePos = Game.Camera.ScreenToWorldPoint(MousePosition);
         CurrentFocus.SetVelocity((mousePos - CurrentFocus.CurrentPosition) / Time.fixedDeltaTime);
 
         targetRail = GetClosestRail(mousePos);
@@ -82,7 +70,7 @@ public class Player : MonoBehaviour
     public Color focusBaseColor;
     void Getfocus()
     {
-        Vector2 mousePos = Camera.ScreenToWorldPoint(MousePosition);
+        Vector2 mousePos = Game.Camera.ScreenToWorldPoint(MousePosition);
         CirclePhysics.CheckPoint(mousePos, out var newFocus);
 
         if(newFocus != CurrentFocus)

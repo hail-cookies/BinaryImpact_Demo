@@ -15,10 +15,23 @@ public class Game : MonoBehaviour
         }
     }
 
+    static Camera _cam;
+    public static Camera Camera
+    {
+        get
+        {
+            if (!_cam)
+                _cam = Camera.main;
+
+            return _cam;
+        }
+    }
+
     public float c_bubbleRadius = 0.5f;
     public float c_supplySpeed = 5f;
     public float c_railSpeed = 5f;
     public float c_spawnInterval = 1f;
+    public float c_comboDuration = 0.3f;
 
     public Rail supply;
     public List<Rail> rails = new List<Rail>();
@@ -85,11 +98,7 @@ public class Game : MonoBehaviour
 
     void CreateBubble()
     {
-        if (!supply.HasSpace)
-        {
-            Lose("Cannot spawn new bubbles!");
-            return;
-        }
+        if (!supply.HasSpace) return;
 
         if(spawnPool.Count == 0)
         {

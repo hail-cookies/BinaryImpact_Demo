@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,8 +36,13 @@ public class CirclePhysics : MonoBehaviour
         {
             if(_instance == null)
             {
-                GameObject go = new GameObject("CirclePhysics");
-                _instance = go.AddComponent<CirclePhysics>();
+                _instance = FindObjectOfType<CirclePhysics>();
+
+                if(_instance == null)
+                {
+                    var go = new GameObject("CirclePhysics");
+                    _instance = go.AddComponent<CirclePhysics>();
+                }
             }
 
             return _instance;
@@ -84,33 +90,34 @@ public class CirclePhysics : MonoBehaviour
         up = new Vector2Int(0, 1),
         upRight = new Vector2Int(1, 1);
 
-    public static int[] GetCollisionArea(Vector2Int coords, bool debug, out int count)
+    public static void GetCollisionArea(Vector2Int coords, int[] result, out int count)
     {
+        if(result.Length < Instance.cellCapacity * 9)
+            Array.Resize(ref result, Instance.cellCapacity * 9);
+
         coords.x = Mathf.Clamp(coords.x, 1, Grid.Width - 2);
         coords.y = Mathf.Clamp(coords.y, 1, Grid.Height - 2);
         
         count = 0;
         //Down
-        count = ReadCell(area, count, Grid.GetCell(coords + downLeft));
-        count = ReadCell(area, count, Grid.GetCell(coords + down));
-        count = ReadCell(area, count, Grid.GetCell(coords + downRight));
+        count = ReadCell(result, count, Grid.GetCell(coords + downLeft));
+        count = ReadCell(result, count, Grid.GetCell(coords + down));
+        count = ReadCell(result, count, Grid.GetCell(coords + downRight));
         //Center
-        count = ReadCell(area, count, Grid.GetCell(coords + left));
-        count = ReadCell(area, count, Grid.GetCell(coords));
-        count = ReadCell(area, count, Grid.GetCell(coords + right));
+        count = ReadCell(result, count, Grid.GetCell(coords + left));
+        count = ReadCell(result, count, Grid.GetCell(coords));
+        count = ReadCell(result, count, Grid.GetCell(coords + right));
         //Up
-        count = ReadCell(area, count, Grid.GetCell(coords + upLeft));
-        count = ReadCell(area, count, Grid.GetCell(coords + up));
-        count = ReadCell(area, count, Grid.GetCell(coords + upRight));
-
-        return area;
+        count = ReadCell(result, count, Grid.GetCell(coords + upLeft));
+        count = ReadCell(result, count, Grid.GetCell(coords + up));
+        count = ReadCell(result, count, Grid.GetCell(coords + upRight));
     }
 
     public static bool CheckPoint(Vector2 position, out CircleBody hit) => CheckCircle(position, 0.0001f, out hit);
     public static bool CheckCircle(Vector2 position, float radius, out CircleBody hit)
     {
         hit = null;
-        int[] area = GetCollisionArea(Grid.Discretize(position), true, out int count);
+        GetCollisionArea(Grid.Discretize(position), area, out int count);
 
         for(int i = 0; i < count; i++)
         {
@@ -256,7 +263,7 @@ public class CirclePhysics : MonoBehaviour
             for (int y = 1; y < Grid.Height - 1; y++)
             {
                 Vector2Int coords = new Vector2Int(x, y);
-                int[] area = GetCollisionArea(coords, false, out int count);
+                GetCollisionArea(coords, area, out int count);
                 var cell = Grid.GetCell(coords);
                 for (int i = 0; i <= cell.Index; i++)
                 {

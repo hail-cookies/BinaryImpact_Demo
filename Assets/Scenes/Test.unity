@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 214212088}
   - component: {fileID: 214212090}
   - component: {fileID: 214212091}
+  - component: {fileID: 214212092}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -254,9 +255,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   c_bubbleRadius: 0.3
-  c_supplySpeed: 5
+  c_supplySpeed: 2
   c_railSpeed: 5
-  c_spawnInterval: 0.5
+  c_spawnInterval: 3
+  c_comboDuration: 0.3
   supply: {fileID: 227305184}
   rails:
   - {fileID: 1645201296}
@@ -281,6 +283,22 @@ MonoBehaviour:
   - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
   - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
   - {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e, type: 3}
+--- !u!114 &214212092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214212087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dc1cc0c078a6ca40addb76ddec37a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  c_scoreTextDuration: 2
+  c_scoreTextSize: 36
+  c_scoreTextVelocity: {x: 0, y: 5}
+  c_scoreTextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &227305183
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,6 +334,8 @@ MonoBehaviour:
   Speed: 1
   dampener: 0.8
   AddOnStart: []
+  length: 0
+  stored: 0
 --- !u!114 &227305185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,23 +351,17 @@ MonoBehaviour:
   spline:
     LutResolution: 100
     points:
-    - {x: 4.227536, y: 0.46876144, z: 0}
-    - {x: 4.9990263, y: 0.16762066, z: 0}
-    - {x: 6.654069, y: 0.55373, z: 0}
-    - {x: 7.085806, y: 1.1197975, z: 0}
-    - {x: 8.097998, y: 2.4469223, z: 0}
-    - {x: 8.509701, y: 8.340936, z: 0}
-    - {x: 5.525251, y: 7.766124, z: 0}
-    - {x: 2.5407991, y: 7.1913114, z: 0}
-    - {x: 7.577593, y: 2.6570153, z: 0}
-    - {x: 4.5931416, y: 2.0822027, z: 0}
-    - {x: 1.6086903, y: 1.50739, z: 0}
-    - {x: 5.269396, y: 5.86526, z: 0}
-    - {x: 2.6237304, y: 7.3612, z: 0}
-    - {x: 1.616013, y: 7.930994, z: 0}
-    - {x: 0.13688439, y: 8.010405, z: 0}
-    - {x: 0.00122495, y: 6.633868, z: 0}
-  pointModes: 000000000100000001000000010000000100000001000000
+    - {x: -3.6583698, y: 6.3104362, z: 0}
+    - {x: -2.0206552, y: 6.248148, z: 0}
+    - {x: -3.0556002, y: 7.854665, z: 0}
+    - {x: -2.0381808, y: 8.136427, z: 0}
+    - {x: -1.0366497, y: 8.413789, z: 0}
+    - {x: 2.429341, y: 8.322913, z: 0}
+    - {x: 2.2248144, y: 7.1014357, z: 0}
+    - {x: 2.0662708, y: 6.154579, z: 0}
+    - {x: -0.56116176, y: 7.38799, z: 0}
+    - {x: -0.44417644, y: 6.301648, z: 0}
+  pointModes: 00000000010000000100000001000000
   pathMode: 0
 --- !u!120 &227305186
 LineRenderer:
@@ -513,6 +527,7 @@ MonoBehaviour:
   t: 1
   tethered: 1
   filter: 9
+  canScore: 1
 --- !u!114 &248650256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -703,6 +718,7 @@ MonoBehaviour:
   t: 0.5
   tethered: 0
   filter: 31
+  canScore: 0
 --- !u!114 &386837897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -889,6 +905,7 @@ MonoBehaviour:
   t: 0.5
   tethered: 0
   filter: 31
+  canScore: 0
 --- !u!114 &440985400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -960,6 +977,7 @@ MonoBehaviour:
   t: 1
   tethered: 1
   filter: 17
+  canScore: 1
 --- !u!114 &593227354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1230,8 +1248,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 0.31811166, g: 1, b: 0, a: 1}
   Speed: 1
-  dampener: 0.4
+  dampener: 0.8
   AddOnStart: []
+  length: 0
+  stored: 0
 --- !u!114 &1069413582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1417,6 +1437,7 @@ MonoBehaviour:
   t: 1
   tethered: 1
   filter: 3
+  canScore: 1
 --- !u!114 &1169726092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1472,8 +1493,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0.917321, b: 0, a: 1}
   Speed: 1
-  dampener: 0.4
+  dampener: 0.8
   AddOnStart: []
+  length: 0
+  stored: 0
 --- !u!114 &1218117049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,8 +1693,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1333798532}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.023, y: -0.0115, z: 20}
-  m_LocalScale: {x: 17.767565, y: 9.981094, z: 1}
+  m_LocalPosition: {x: 0.023, y: 0.7123, z: 20}
+  m_LocalScale: {x: 17.767565, y: 11.428689, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 330585546}
@@ -1776,6 +1799,7 @@ MonoBehaviour:
   t: 1
   tethered: 1
   filter: 5
+  canScore: 1
 --- !u!114 &1349994636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1824,7 +1848,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1449160864}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.00122495, y: 6.633868, z: 0}
+  m_LocalPosition: {x: -0.44417644, y: 6.301648, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1846,7 +1870,8 @@ MonoBehaviour:
   rail: {fileID: 227305184}
   t: 1
   tethered: 1
-  filter: 0
+  filter: 31
+  canScore: 0
   rails:
   - {fileID: 1645201296}
   - {fileID: 1218117048}
@@ -1868,7 +1893,7 @@ MonoBehaviour:
   CurrentPosition: {x: 0, y: 0}
   Acceleration: {x: 0, y: 0}
   mass: 1
-  radius: 0.5
+  radius: 0.1
   _restitution: 0.9
   useGravity: 1
   disableCollision: 0
@@ -1907,8 +1932,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0, b: 0, a: 1}
   Speed: 1
-  dampener: 0.4
+  dampener: 0.8
   AddOnStart: []
+  length: 0
+  stored: 0
 --- !u!114 &1645201297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2078,8 +2105,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 0, g: 0.72646475, b: 1, a: 1}
   Speed: 1
-  dampener: 0.4
+  dampener: 0.8
   AddOnStart: []
+  length: 0
+  stored: 0
 --- !u!114 &1709751506
 MonoBehaviour:
   m_ObjectHideFlags: 0

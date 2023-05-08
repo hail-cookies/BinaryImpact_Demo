@@ -34,7 +34,6 @@ public class Bubble : MonoBehaviour
         }
     }
 
-
     private void OnEnable()
     {
         if(!cache.ContainsKey(gameObject))

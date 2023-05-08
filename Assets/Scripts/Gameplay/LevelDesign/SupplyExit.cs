@@ -15,19 +15,6 @@ public class SupplyExit : RailExit
 
     protected override void ProcessCollision(CircleBody other, Bubble bubble, CircleCollision collision)
     {
-        if(available.Count == 0)
-        {
-            foreach(Rail rail in used)
-                if(!rail.HasSpace)
-                {
-                    Game.Lose("All lanes are full!");
-                    return;
-                }
-
-            available.AddRange(used);
-            used.Clear();
-        }
-
         while(available.Count > 0)
         {
             //Get random target rail
@@ -44,6 +31,19 @@ public class SupplyExit : RailExit
                 selected.Add(other);
                 break;
             }
+        }
+
+        if (available.Count == 0)
+        {
+            bool defeat = true;
+            foreach (Rail rail in used)
+                defeat &= !rail.HasSpace;
+
+            if(defeat)
+                Game.Lose("All lanes are full!");
+
+            available.AddRange(used);
+            used.Clear();
         }
     }
 }

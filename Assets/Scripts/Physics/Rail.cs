@@ -116,6 +116,7 @@ public class Rail : MonoBehaviour
         LineRenderer.SetPositions(positions);
     }
 
+    public float length, stored;
     private void FixedUpdate()
     {
         gizmoData.Clear();
@@ -177,10 +178,11 @@ public class Rail : MonoBehaviour
             body.OnApplyConstraints += ApplyConstraint;
             body.CurrentPosition = body.transform.position = SamplePoint(t);
             body.SetVelocity(Vector2.zero);
+            body.Restitution = 0;
         }
     }
 
-    public void Remove(CircleBody body)
+    public bool Remove(CircleBody body)
     {
         for(int i = 0; i < TrackedBodies.Count; i++)
             if (TrackedBodies[i].Body == body)
@@ -188,8 +190,11 @@ public class Rail : MonoBehaviour
                 body.Ownership.Release(TrackedBodies[i].key);
                 TrackedBodies.RemoveAt(i);
                 body.OnApplyConstraints -= ApplyConstraint;
-                break;
+                body.Restitution = 0.9f;
+                return true;
             }
+
+        return false;
     }
 
     private void ApplyConstraint(CircleBody body)

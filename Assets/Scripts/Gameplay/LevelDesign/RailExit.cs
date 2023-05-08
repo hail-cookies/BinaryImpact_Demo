@@ -8,8 +8,19 @@ public class RailExit : MonoBehaviour
     public float t = 0.5f;
     public bool tethered = true;
     public BubbleType filter;
-    protected CircleBody body;
-    public CircleBody Body { get { return body; } }
+    public bool canScore = false;
+
+    CircleBody _body;
+    public CircleBody Body 
+    { 
+        get 
+        {
+            if(_body== null)
+                _body = GetComponent<CircleBody>();
+
+            return _body;
+        } 
+    }
 
     private void OnValidate()
     {
@@ -29,12 +40,10 @@ public class RailExit : MonoBehaviour
 
     protected virtual void Inititalize()
     {
-        body = GetComponent<CircleBody>();
-        body.useGravity = false;
-        body.isTrigger = true;
-        body.SendCollisionEvents = true;
-
-        body.OnCollision += OnCollision;
+        Body.useGravity = false;
+        Body.isTrigger = true;
+        Body.SendCollisionEvents = true;
+        Body.OnCollision += OnCollision;
     }
 
     private void Update()
@@ -65,9 +74,14 @@ public class RailExit : MonoBehaviour
     {
         if (rail)
         {
-            rail.Remove(other);
-            other.useGravity = true;
-            other.SetVelocity(other.Velocity.Rotate(Random.Range(-1,1)));
+            if (rail.Remove(other))
+            {
+                other.useGravity = true;
+                other.SetVelocity(other.Velocity.Rotate(Random.Range(-1, 1)));
+
+                if (canScore)
+                    Score.Add(gameObject, transform.position, bubble);
+            }
         }
     }
 }
