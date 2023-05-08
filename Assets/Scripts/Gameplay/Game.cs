@@ -33,6 +33,7 @@ public class Game : MonoBehaviour
     public float c_railSpeed = 5f;
     public float c_spawnInterval = 1f;
     public float c_comboDuration = 0.3f;
+    public float c_laserTimer = 5f;
 
     public TextMeshProUGUI scoreDisplay;
     public Rail supply;
@@ -121,6 +122,11 @@ public class Game : MonoBehaviour
         body.CurrentPosition = supply.SamplePoint(0);
         supply.Add(body);
         body.Radius = c_bubbleRadius;
+    }
+
+    public static void DestroyBubble(Bubble bubble)
+    {
+        ObjectPool.Destroy(bubble.gameObject);
     }
 
     public static void Lose(string msg)

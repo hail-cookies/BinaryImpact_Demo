@@ -393,8 +393,9 @@ MonoBehaviour:
   c_bubbleRadius: 0.3
   c_supplySpeed: 2
   c_railSpeed: 5
-  c_spawnInterval: 3
+  c_spawnInterval: 1
   c_comboDuration: 1
+  c_laserTimer: 5
   scoreDisplay: {fileID: 136382128}
   supply: {fileID: 227305184}
   rails:
@@ -420,6 +421,9 @@ MonoBehaviour:
   - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
   - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
   - {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e, type: 3}
+  - {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855, type: 3}
+  - {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855, type: 3}
+  - {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855, type: 3}
 --- !u!114 &214212092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -663,7 +667,7 @@ MonoBehaviour:
   rail: {fileID: 1218117048}
   t: 1
   tethered: 1
-  filter: 9
+  filter: 8
   canScore: 1
 --- !u!114 &248650256
 MonoBehaviour:
@@ -1113,7 +1117,7 @@ MonoBehaviour:
   rail: {fileID: 1069413581}
   t: 1
   tethered: 1
-  filter: 17
+  filter: 16
   canScore: 1
 --- !u!114 &593227354
 MonoBehaviour:
@@ -1154,7 +1158,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &653172634
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1573,7 +1577,7 @@ MonoBehaviour:
   rail: {fileID: 1645201296}
   t: 1
   tethered: 1
-  filter: 3
+  filter: 2
   canScore: 1
 --- !u!114 &1169726092
 MonoBehaviour:
@@ -2059,7 +2063,7 @@ MonoBehaviour:
   rail: {fileID: 1709751505}
   t: 1
   tethered: 1
-  filter: 5
+  filter: 4
   canScore: 1
 --- !u!114 &1349994636
 MonoBehaviour:

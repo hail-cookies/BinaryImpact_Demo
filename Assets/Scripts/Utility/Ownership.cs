@@ -5,6 +5,7 @@ public class Ownership<T>
     uint nextKey = 1;
     uint currentKey = 1;
     public T This { get; private set; }
+    public bool Claimed { get => currentKey > 0; }
 
     public Ownership(T reference)
     {

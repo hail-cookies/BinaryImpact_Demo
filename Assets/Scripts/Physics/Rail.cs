@@ -31,7 +31,7 @@ public class Rail : MonoBehaviour
     List<TrackedBody> TrackedBodies = new List<TrackedBody>();
     List<(Vector2, Vector2, Vector2)> gizmoData = new List<(Vector2, Vector2, Vector2)>();
 
-    float minProg = 0f;
+     public float ProjectedRadius { get; private set; } = 0f;
 
     public bool HasSpace
     {
@@ -69,7 +69,7 @@ public class Rail : MonoBehaviour
     public float ProjectPoint(Vector2 point) => ClampProgress(Spline.ProjectPoint(point));
     public Vector3 SamplePoint(float t) => Spline.SamplePoint(ClampProgress(t));
     public Vector3 SampleDirection(float t) => Spline.SampleDirection(ClampProgress(t));
-    public float ClampProgress(float t) => Mathf.Clamp(t, minProg, 1f - minProg);
+    public float ClampProgress(float t) => Mathf.Clamp(t, ProjectedRadius, 1f - ProjectedRadius);
 
     private void OnDrawGizmos()
     {
@@ -101,7 +101,7 @@ public class Rail : MonoBehaviour
 
     private void Start()
     {
-        minProg = Spline.spline.DistToProg(Game.Instance.c_bubbleRadius);
+        ProjectedRadius = Spline.spline.DistToProg(Game.Instance.c_bubbleRadius);
 
         foreach (var body in AddOnStart)
             Add(body);
@@ -166,9 +166,8 @@ public class Rail : MonoBehaviour
     public void Add(CircleBody body)
     {
         //Check if body is already tracked
-        foreach (var tracked in TrackedBodies)
-            if (tracked.Body == body)
-                return;
+        if (Contains(body))
+            return;
         //Try to get ownership
         if (body.Ownership.Claim(BodyClaimed, out uint key))
         {
@@ -197,10 +196,73 @@ public class Rail : MonoBehaviour
         return false;
     }
 
+    public bool Contains(CircleBody body)
+    {
+        foreach (var tracked in TrackedBodies)
+            if (tracked.Body == body)
+                return true;
+
+        return false;
+    }
+
+    public bool TryGetBody(CircleBody body, out TrackedBody result)
+    {
+        for(int i = 0; i < TrackedBodies.Count; i++)
+        {
+            if (TrackedBodies[i].Body == body)
+            {
+                result = TrackedBodies[i];
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
+    }
+
+    public bool TryGetBody(float t, out TrackedBody result)
+    {
+        int min = 0, max = TrackedBodies.Count - 1;
+
+        while(min <= max)
+        {
+            int mid = (int)((min + max) / 2f);
+            float current = TrackedBodies[mid].t;
+            if (current < t)
+            {
+                if(current + ProjectedRadius >= t)
+                {
+                    result = TrackedBodies[mid];
+                    return true;
+                }
+                else
+                    min = mid + 1;
+            }
+            else if (current > t)
+            {
+                if (current - ProjectedRadius <= t)
+                {
+                    result = TrackedBodies[mid];
+                    return true;
+                }
+                else
+                    max = mid - 1;
+            }
+            else
+            {
+                result = TrackedBodies[mid];
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
+    }
+
     private void ApplyConstraint(CircleBody body)
     {
         float t = ProjectPoint(body.CurrentPosition);
-        t = Mathf.Clamp(t, minProg, 1 - minProg);
+        t = Mathf.Clamp(t, ProjectedRadius, 1 - ProjectedRadius);
         Vector2 delta = (Vector2)SamplePoint(t) - body.CurrentPosition;
         body.CurrentPosition += delta;
         body.AddVelocity(-delta / CirclePhysics.DeltaTime);

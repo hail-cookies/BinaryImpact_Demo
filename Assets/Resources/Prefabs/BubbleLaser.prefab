@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4276111548688439800}
   - component: {fileID: 4276111548688439801}
   - component: {fileID: 4276111548688439806}
-  - component: {fileID: 1942565745028269671}
+  - component: {fileID: -5941907453673796125}
   m_Layer: 0
   m_Name: BubbleLaser
   m_TagString: Untagged
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1507eddf644c6f44b8fbbfc51ccd0591, type: 2}
+  - {fileID: 2100000, guid: b2008df869ebefd47b661d5fce980a8c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -107,7 +107,7 @@ MonoBehaviour:
   disableCollision: 0
   isTrigger: 0
   SendCollisionEvents: 0
---- !u!114 &1942565745028269671
+--- !u!114 &-5941907453673796125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4276111548688439807}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb4b0d7c4e35c6e4cabb2b42f2c63234, type: 3}
+  m_Script: {fileID: 11500000, guid: 968c9edb1f56d5a4691f86aff3c1dc43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: -1
+  type: 1

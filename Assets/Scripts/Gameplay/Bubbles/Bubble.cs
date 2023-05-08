@@ -22,6 +22,8 @@ public class Bubble : MonoBehaviour
 
     public BubbleType type = BubbleType.Green;
 
+    public Label Label { get; protected set; }
+
     CircleBody _body;
     public CircleBody Body
     {
@@ -39,6 +41,11 @@ public class Bubble : MonoBehaviour
         
     }
 
+    public virtual void Suspend(bool state)
+    {
+
+    }
+
     private void OnEnable()
     {
         if(!cache.ContainsKey(gameObject))
@@ -48,7 +55,7 @@ public class Bubble : MonoBehaviour
     private void OnDisable()
     {
         cache.Remove(gameObject);
-        if(_label)
-            _label.Destroy();
+        if(Label)
+            Label.Destroy();
     }
 }

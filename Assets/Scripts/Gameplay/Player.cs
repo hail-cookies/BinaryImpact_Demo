@@ -73,6 +73,11 @@ public class Player : MonoBehaviour
         Vector2 mousePos = Game.Camera.ScreenToWorldPoint(MousePosition);
         CirclePhysics.CheckPoint(mousePos, out var newFocus);
 
+        if (Game.Instance.supply.Contains(newFocus))
+            return;
+        if (newFocus && !newFocus.Ownership.Claimed)
+            return;
+
         if(newFocus != CurrentFocus)
         {
             ToggleFocus(CurrentFocus, false);
@@ -102,6 +107,9 @@ public class Player : MonoBehaviour
                     body.CurrentPosition.x,
                     body.CurrentPosition.y,
                     state ? -1 : 0);
+
+            if (Bubble.TryGetBubble(body.gameObject, out var bubble))
+                bubble.Suspend(state);
         }
     }
 
