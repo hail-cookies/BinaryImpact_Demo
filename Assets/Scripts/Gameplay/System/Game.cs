@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 { 
@@ -110,14 +112,17 @@ public class Game : MonoBehaviour
             rail.Speed = SpeedRail;
     }
 
+    [SerializeField]
+    float _spawnMultiplier = 1f;
     float _lastSpawn = -Mathf.Infinity;
     void Spawn(float t)
     {
         if (TimerSpawn < 0)
             return;
 
-        if(t - _lastSpawn > TimerSpawn)
+        if(t - _lastSpawn > TimerSpawn * _spawnMultiplier)
         {
+            _spawnMultiplier = Mathf.Max(0.2f, _spawnMultiplier * (1f - GameSettings.multiplierSpeedup));
             _lastSpawn = t;
             _spawnSettings.CreateBubble(supply);
         }
@@ -143,8 +148,10 @@ public class Game : MonoBehaviour
         ObjectPool.Destroy(bubble.gameObject);
     }
 
+    public List<UnityEvent<string>> onDefeat;
     public static void Lose(string msg)
     {
-        Debug.Log("DEFEAT! " + msg);
+        foreach (var evt in Instance.onDefeat)
+            evt.Invoke("GAME OVER!\n" + msg);
     }
 }

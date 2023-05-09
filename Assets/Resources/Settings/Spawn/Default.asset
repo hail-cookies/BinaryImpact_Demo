@@ -27,7 +27,7 @@ MonoBehaviour:
     options:
     - value: {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e,
         type: 3}
-      weight: 60
+      weight: 100
     - value: {fileID: 4276111548688439807, guid: d6289ac83eabd0140b96c3a8b5698576,
         type: 3}
       weight: 1
@@ -39,7 +39,7 @@ MonoBehaviour:
       weight: 2
     - value: {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855,
         type: 3}
-      weight: 2
+      weight: 1
     - value: {fileID: 4276111548688439807, guid: 60f70983553d52549acbdb313a8c6a54,
         type: 3}
       weight: 2

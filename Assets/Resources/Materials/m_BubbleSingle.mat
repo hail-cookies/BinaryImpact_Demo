@@ -94,7 +94,7 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _HighlightIntensity: 0
-    - _HighlightWidth: 0.288
+    - _HighlightWidth: 0.8
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005

@@ -15,6 +15,7 @@ public class SupplyExit : RailExit
 
     protected override void ProcessCollision(CircleBody other, Bubble bubble, CircleCollision collision)
     {
+        bool transferred = false;
         while(available.Count > 0)
         {
             //Get random target rail
@@ -30,6 +31,7 @@ public class SupplyExit : RailExit
                 rail.Remove(other);
                 selected.Add(other);
                 bubble.EnterPlay();
+                transferred = true;
                 break;
             }
         }
@@ -40,7 +42,7 @@ public class SupplyExit : RailExit
             foreach (Rail rail in used)
                 defeat &= !rail.HasSpace;
 
-            if(defeat)
+            if(defeat && !transferred)
                 Game.Lose("All lanes are full!");
 
             available.AddRange(used);

@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public static bool active = true;
+
     public InputActionReference a_lMouse, a_mousePosition;
     public GameObject prefab;
 
@@ -16,17 +18,14 @@ public class Player : MonoBehaviour
         a_lMouse.action.canceled += LMouseUp;
 
         a_mousePosition.action.Enable();
-        //a_mousePosition.action.performed += GetMousePosition;
     }
 
     public Vector2 MousePosition { get => a_mousePosition.action.ReadValue<Vector2>(); }
-    private void GetMousePosition(InputAction.CallbackContext obj)
-    {
-        //MousePosition = obj.ReadValue<Vector2>();
-    }
 
     private void LMouseUp(InputAction.CallbackContext obj)
     {
+        if (!active) return;
+
         var body = CurrentFocus;
         ToggleFocus(CurrentFocus, false);
 
@@ -44,12 +43,14 @@ public class Player : MonoBehaviour
 
     private void LMouseDown(InputAction.CallbackContext obj)
     {
+        if(!active) return;
         Getfocus();
     }
 
     Rail targetRail;
     void DragFocus()
     {
+        if(!active) return;
         if(CurrentFocus== null) return;
 
         Vector2 mousePos = Game.Camera.ScreenToWorldPoint(MousePosition);

@@ -20,6 +20,7 @@ public class GameSettings : ScriptableObject
     public float timerSlow = 5f;
     public float distanceRailSpacing = 1.5f;
     public float multiplierSlow = 0.5f;
+    public float multiplierSpeedup = 0.001f;
 
     public List<ScoringRule> scoringRules = new List<ScoringRule>();
     public long GetScoringValue(BubbleSelect bubble)
