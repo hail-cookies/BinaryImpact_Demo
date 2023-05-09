@@ -14,7 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedSupply: 5
   speedRail: 5
-  durationCombo: 1
+  timerCombo: 1
   timerLaser: 5
   timerBomb: 5
+  timerFreeze: 3
+  timerSlow: 5
   distanceRailSpacing: 1.5
+  multiplierSlow: 0.5
+  scoringRules:
+  - bubble: 0
+    value: 3
+  - bubble: 1
+    value: 1
+  - bubble: 2
+    value: 1
+  - bubble: 3
+    value: 1
+  - bubble: 4
+    value: 1

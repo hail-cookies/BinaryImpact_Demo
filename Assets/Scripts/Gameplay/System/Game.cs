@@ -28,8 +28,26 @@ public class Game : MonoBehaviour
         }
     }
 
-    public GameSettings gameSettings;
-    public SpawnSettings spawnSettings;
+    public static TimedEvents TimedEvents { get; private set; } = new TimedEvents();
+
+    [SerializeField]
+    GameSettings _gameSettings;
+    public static GameSettings GameSettings
+    {
+        get => Instance._gameSettings;
+        set => Instance._gameSettings = value;
+    }
+    [SerializeField]
+    SpawnSettings _spawnSettings;
+    public static SpawnSettings SpawnSettings
+    {
+        get => Instance._spawnSettings; 
+        set => Instance._spawnSettings = value;
+    }
+
+    public static float SpeedSupply { get; set; }
+    public static float SpeedRail { get; set; }
+    public static float TimerSpawn { get; set; }
 
     public TextMeshProUGUI scoreDisplay;
     public Rail supply;
@@ -38,9 +56,9 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
-        spawnSettings.Initialize();
+        _spawnSettings.Initialize();
 
-        float lineWidth = spawnSettings.bubbleRadius * 2.1f;
+        float lineWidth = _spawnSettings.bubbleRadius * 2.1f;
         supply.LineRenderer.widthCurve = 
             new AnimationCurve(new Keyframe[] { 
                 new Keyframe(0, 1), 
@@ -58,6 +76,10 @@ public class Game : MonoBehaviour
 
         foreach (var sink in sinks)
             sink.Body.OnCollision += BubbleEnteredSink;
+
+        SpeedSupply = GameSettings.speedRail;
+        SpeedRail = GameSettings.speedRail;
+        TimerSpawn = _spawnSettings.spawnInterval;
     }
 
     private void BubbleEnteredSink(CircleCollision collision)
@@ -76,24 +98,43 @@ public class Game : MonoBehaviour
         float dt = Time.deltaTime;
         UpdateRails();
         Spawn(t);
+        UpdateEvents(t);
 
         scoreDisplay.text = Score.Current + "";
     }
 
     void UpdateRails()
     {
-        supply.Speed = gameSettings.speedSupply;
+        supply.Speed = SpeedSupply;
         foreach(Rail rail in rails)
-            rail.Speed = gameSettings.speedRail;
+            rail.Speed = SpeedRail;
     }
 
     float _lastSpawn = -Mathf.Infinity;
     void Spawn(float t)
     {
-        if(t - _lastSpawn > spawnSettings.spawnInterval)
+        if (TimerSpawn < 0)
+            return;
+
+        if(t - _lastSpawn > TimerSpawn)
         {
             _lastSpawn = t;
-            spawnSettings.CreateBubble(supply);
+            _spawnSettings.CreateBubble(supply);
+        }
+    }
+
+    void UpdateEvents(float t)
+    {
+        for(int i = 0; i < TimedEvents.Count; i++)
+        {
+            var evt = TimedEvents.Get(i);
+            if(t - evt.created > evt.duration)
+            {
+                TimedEvents.Remove(evt.key);
+                i--;
+
+                evt.callBack?.Invoke();
+            }
         }
     }
 

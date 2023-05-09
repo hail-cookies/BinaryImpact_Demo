@@ -54,8 +54,20 @@ public class Score
 
     public static void Add(GameObject source, Vector2 position, Bubble bubble)
     {
-        bubble.AbilityReset();
-        Add(source, position, 1);
+        bubble.LeavePlay();
+
+        long value = 0;
+        int hits = 0;
+        for(int i = 0; i < 5; i++)
+        {
+            if ((bubble.bubbleType & (BubbleType)(1 << i)) > 0)
+            {
+                value += Game.GameSettings.GetScoringValue((BubbleSelect)i);
+                hits++;
+            }
+        }
+
+        Add(source, position, value + hits);
     }
 
     public static void Add(GameObject source, Vector2 position, long value)
@@ -65,7 +77,7 @@ public class Score
         if (!combos.ContainsKey(source))
             combos.Add(source, CreateCombo(position, time));
         //Entry is too old
-        else if (time - combos[source].LastUpdate > Game.Instance.gameSettings.durationCombo)
+        else if (time - combos[source].LastUpdate > Game.GameSettings.timerCombo)
         {
             combos[source].FloatingText.Destroy();
             combos[source] = CreateCombo(position, time);

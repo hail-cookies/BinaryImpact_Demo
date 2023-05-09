@@ -45,12 +45,12 @@ public class Bubble : MonoBehaviour
         }
     }
 
-    public virtual void AbilityTrigger()
+    public virtual void EnterPlay()
     {
         
     }
 
-    public virtual void AbilityReset()
+    public virtual void LeavePlay()
     {
 
     }

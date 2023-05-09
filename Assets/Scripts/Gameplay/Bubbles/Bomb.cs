@@ -5,7 +5,7 @@ using static UnityEngine.UI.GridLayoutGroup;
 
 public class Bomb : Bubble
 {
-    public override void AbilityTrigger()
+    public override void EnterPlay()
     {
         StopAllCoroutines();
         StartCoroutine(CountDown());
@@ -17,7 +17,7 @@ public class Bomb : Bubble
         suspended = state;
     }
 
-    public override void AbilityReset()
+    public override void LeavePlay()
     {
         StopAllCoroutines();
         suspended = false;
@@ -25,7 +25,7 @@ public class Bomb : Bubble
 
     IEnumerator CountDown()
     {
-        float timer = Game.Instance.gameSettings.timerBomb + 1f;
+        float timer = Game.GameSettings.timerBomb + 1f;
 
         if(Label)
             Label.Destroy();
@@ -52,8 +52,8 @@ public class Bomb : Bubble
         }
         
         Vector2 halfExtents = new Vector2(
-            Game.Instance.gameSettings.distanceRailSpacing,
-            Game.Instance.spawnSettings.bubbleRadius * 2f);
+            Game.GameSettings.distanceRailSpacing,
+            Game.SpawnSettings.bubbleRadius * 2f);
         CirclePhysics.CheckRectangle(Body.CurrentPosition, halfExtents, out var hits);
 
         foreach (var hit in hits)

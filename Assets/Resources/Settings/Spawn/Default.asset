@@ -27,8 +27,8 @@ MonoBehaviour:
     options:
     - value: {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e,
         type: 3}
-      weight: 20
-    - value: {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855,
+      weight: 5
+    - value: {fileID: 4276111548688439807, guid: 60f70983553d52549acbdb313a8c6a54,
         type: 3}
       weight: 1
   spawnColors:

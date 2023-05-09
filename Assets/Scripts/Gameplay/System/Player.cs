@@ -68,9 +68,14 @@ public class Player : MonoBehaviour
         Vector2 mousePos = Game.Camera.ScreenToWorldPoint(MousePosition);
         CirclePhysics.CheckPoint(mousePos, out var newFocus);
 
+        //Is not attached to a rail
+        if (newFocus && !newFocus.Ownership.Claimed)
+            return;
+        //Is attached to the supply rail
         if (Game.Instance.supply.Contains(newFocus))
             return;
-        if (newFocus && !newFocus.Ownership.Claimed)
+        //Is locked
+        if (newFocus.gameObject.TryGetComponent<Locked>(out var locked))
             return;
 
         if(newFocus != CurrentFocus)
