@@ -390,12 +390,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8af6b657f150d846ab3558fa565e1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  c_bubbleRadius: 0.3
   c_supplySpeed: 2
   c_railSpeed: 5
-  c_spawnInterval: 1
   c_comboDuration: 1
   c_laserTimer: 5
+  spawnSettings: {fileID: 11400000, guid: 1c978690ee0ebba4694a5a9ba21e3dac, type: 2}
   scoreDisplay: {fileID: 136382128}
   supply: {fileID: 227305184}
   rails:
@@ -406,24 +405,6 @@ MonoBehaviour:
   sinks:
   - {fileID: 440985399}
   - {fileID: 386837896}
-  availablePrefabs: []
-  startingPool:
-  - {fileID: 4276111548688439807, guid: 95f3fcd531938354da28a8c743b9159f, type: 3}
-  - {fileID: 4276111548688439807, guid: 95f3fcd531938354da28a8c743b9159f, type: 3}
-  - {fileID: 4276111548688439807, guid: 95f3fcd531938354da28a8c743b9159f, type: 3}
-  - {fileID: 4276111548688439807, guid: 2e65d2419dbac0b46b422f4cefafa590, type: 3}
-  - {fileID: 4276111548688439807, guid: 2e65d2419dbac0b46b422f4cefafa590, type: 3}
-  - {fileID: 4276111548688439807, guid: 2e65d2419dbac0b46b422f4cefafa590, type: 3}
-  - {fileID: 4276111548688439807, guid: 5f74fe0fc31a2fb4c8f61349a4a5f874, type: 3}
-  - {fileID: 4276111548688439807, guid: 5f74fe0fc31a2fb4c8f61349a4a5f874, type: 3}
-  - {fileID: 4276111548688439807, guid: 5f74fe0fc31a2fb4c8f61349a4a5f874, type: 3}
-  - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
-  - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
-  - {fileID: 4276111548688439807, guid: 8ff633d808d401046b603c04b98bb275, type: 3}
-  - {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e, type: 3}
-  - {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855, type: 3}
-  - {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855, type: 3}
-  - {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855, type: 3}
 --- !u!114 &214212092
 MonoBehaviour:
   m_ObjectHideFlags: 0

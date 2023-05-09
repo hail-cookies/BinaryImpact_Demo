@@ -68,7 +68,6 @@ public class Laser : Bubble
                     }
                 }
 
-        Label.Destroy();
         owner.Remove(Body);
         Game.DestroyBubble(this);
     }

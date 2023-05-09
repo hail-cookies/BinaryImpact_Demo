@@ -9,6 +9,7 @@ public class RailTest : MonoBehaviour
     Color color;
     public float t;
     public CircleBody current;
+
     private void Update()
     {
         if(rail)

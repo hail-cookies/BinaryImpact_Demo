@@ -37,7 +37,7 @@ public class Rail : MonoBehaviour
     {
         get
         {
-            float bubbleSize = 2f * Game.Instance.c_bubbleRadius;
+            float bubbleSize = 2f * Game.Instance.spawnSettings.c_bubbleRadius;
             return (TrackedBodies.Count + 1) * bubbleSize < Spline.Length;
         }
     }
@@ -101,7 +101,7 @@ public class Rail : MonoBehaviour
 
     private void Start()
     {
-        ProjectedRadius = Spline.spline.DistToProg(Game.Instance.c_bubbleRadius);
+        ProjectedRadius = Spline.spline.DistToProg(Game.Instance.spawnSettings.c_bubbleRadius);
 
         foreach (var body in AddOnStart)
             Add(body);

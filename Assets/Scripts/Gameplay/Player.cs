@@ -67,7 +67,6 @@ public class Player : MonoBehaviour
     }
 
     public CircleBody CurrentFocus;
-    public Color focusBaseColor;
     void Getfocus()
     {
         Vector2 mousePos = Game.Camera.ScreenToWorldPoint(MousePosition);
@@ -99,8 +98,7 @@ public class Player : MonoBehaviour
             if (!state) body.Ownership.Release(ownershipKey);
 
             CurrentFocus = state ? body : null;
-            focusBaseColor = state ? body.Renderer.material.color : focusBaseColor;
-            body.Renderer.material.color = state ? Color.white : focusBaseColor;
+            body.Renderer.material.SetFloat("_HighlightIntensity", state ? 5f : 0f);
             body.disableCollision = state;
             body.transform.position =
                 new Vector3(

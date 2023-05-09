@@ -12,6 +12,15 @@ public enum BubbleType
     Green = 16
 }
 
+public enum BubbleSelect
+{
+    Special = 0, 
+    Red = 1, 
+    Blue = 2, 
+    Yellow = 3, 
+    Green = 4
+}
+
 [RequireComponent(typeof(CircleBody))]
 public class Bubble : MonoBehaviour
 {
@@ -55,7 +64,10 @@ public class Bubble : MonoBehaviour
     private void OnDisable()
     {
         cache.Remove(gameObject);
-        if(Label)
+        if (Label)
+        {
             Label.Destroy();
+            Label = null;
+        }
     }
 }

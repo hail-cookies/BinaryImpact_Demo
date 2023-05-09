@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffa7b3c8d9b0b747883f709c2ed6d1f, type: 3}
+  m_Name: Default
+  m_EditorClassIdentifier: 
+  c_spawnInterval: 3
+  c_bubbleRadius: 0.3
+  c_green: {r: 0.31811166, g: 1, b: 0, a: 1}
+  c_blue: {r: 0, g: 0.72646475, b: 1, a: 1}
+  c_red: {r: 1, g: 0, b: 0, a: 1}
+  c_yellow: {r: 1, g: 0.917321, b: 0, a: 1}
+  m_single: {fileID: 2100000, guid: b6a5298d1ebedcd488559bdec0b5c5ed, type: 2}
+  m_double: {fileID: 2100000, guid: 595bc5c28f54a6b4098e99346e6bddae, type: 2}
+  m_triple: {fileID: 2100000, guid: 303ce034e576055409397428b6f40275, type: 2}
+  m_quadruple: {fileID: 2100000, guid: c6a3527b67ab1bd48b8a34b98b7d33a2, type: 2}
+  spawnPrefabs:
+    weightAdjustment: 0.2
+    options:
+    - value: {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e,
+        type: 3}
+      weight: 1
+  spawnColors:
+    weightAdjustment: 0.2
+    options:
+    - value: 1
+      weight: 1
+    - value: 2
+      weight: 1
+    - value: 3
+      weight: 1
+    - value: 4
+      weight: 1
+  spawnColorCounts:
+    weightAdjustment: 0.2
+    options:
+    - value: 1
+      weight: 1
+    - value: 2
+      weight: 1
+    - value: 3
+      weight: 1
+    - value: 4
+      weight: 1
