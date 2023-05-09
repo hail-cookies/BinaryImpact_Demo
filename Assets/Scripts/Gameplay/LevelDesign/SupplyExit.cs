@@ -29,7 +29,7 @@ public class SupplyExit : RailExit
                 //Transfer bubble
                 rail.Remove(other);
                 selected.Add(other);
-                bubble.TriggerAbility();
+                bubble.AbilityTrigger();
                 break;
             }
         }

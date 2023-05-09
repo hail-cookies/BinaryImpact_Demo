@@ -24,10 +24,8 @@ public class Player : MonoBehaviour
         MousePosition = obj.ReadValue<Vector2>();
     }
 
-    bool lMouse = false;
     private void LMouseUp(InputAction.CallbackContext obj)
     {
-        lMouse = false;
         var body = CurrentFocus;
         ToggleFocus(CurrentFocus, false);
 
@@ -35,7 +33,6 @@ public class Player : MonoBehaviour
         {
             if (targetRail != null && targetRail.HasSpace)
             {
-                debug2.position = (Vector3)body.CurrentPosition - Vector3.forward;
                 body.CurrentPosition = targetRail.SamplePoint(0);
                 targetRail.Add(body);
             }
@@ -46,7 +43,6 @@ public class Player : MonoBehaviour
 
     private void LMouseDown(InputAction.CallbackContext obj)
     {
-        lMouse = true;
         Getfocus();
     }
 
@@ -107,7 +103,7 @@ public class Player : MonoBehaviour
                     state ? -1 : 0);
 
             if (Bubble.TryGetBubble(body.gameObject, out var bubble))
-                bubble.Suspend(state);
+                bubble.AbilitySuspend(state);
         }
     }
 
@@ -117,7 +113,6 @@ public class Player : MonoBehaviour
         return true;
     }
 
-    public Transform debug1, debug2;
     public List<Rail> rails = new List<Rail>();
     Rail GetClosestRail(Vector3 mousePos)
     {
@@ -144,8 +139,6 @@ public class Player : MonoBehaviour
             }
         }
 
-        debug1.position = pos - Vector3.forward;
-        debug2.position = mousePos - Vector3.forward;
         return closestRail;
     }
 }

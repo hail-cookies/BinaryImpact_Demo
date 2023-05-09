@@ -4,21 +4,27 @@ using UnityEngine;
 
 public class Laser : Bubble
 {
-    public override void TriggerAbility()
+    public override void AbilityTrigger()
     {
         StopAllCoroutines();
         StartCoroutine(CountDown());
     }
 
     bool suspended = false;
-    public override void Suspend(bool state)
+    public override void AbilitySuspend(bool state)
     {
         suspended = state;
     }
 
+    public override void AbilityReset()
+    {
+        StopAllCoroutines();
+        suspended = false;
+    }
+
     IEnumerator CountDown()
     {
-        float timer = Game.Instance.c_laserTimer + 1f;
+        float timer = Game.Instance.gameSettings.timerLaser + 1f;
 
         if(Label)
             Label.Destroy();

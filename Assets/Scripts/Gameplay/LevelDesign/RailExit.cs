@@ -67,7 +67,7 @@ public class RailExit : MonoBehaviour
 
     protected virtual bool CheckFilter(Bubble bubble)
     {
-        return (bubble.type & filter) > 0;
+        return (bubble.bubbleType & filter) > 0;
     }
 
     protected virtual void ProcessCollision(CircleBody other, Bubble bubble, CircleCollision collision)

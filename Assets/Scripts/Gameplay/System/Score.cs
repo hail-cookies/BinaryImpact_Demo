@@ -54,6 +54,7 @@ public class Score
 
     public static void Add(GameObject source, Vector2 position, Bubble bubble)
     {
+        bubble.AbilityReset();
         Add(source, position, 1);
     }
 
@@ -64,7 +65,7 @@ public class Score
         if (!combos.ContainsKey(source))
             combos.Add(source, CreateCombo(position, time));
         //Entry is too old
-        else if (time - combos[source].LastUpdate > Game.Instance.c_comboDuration)
+        else if (time - combos[source].LastUpdate > Game.Instance.gameSettings.durationCombo)
         {
             combos[source].FloatingText.Destroy();
             combos[source] = CreateCombo(position, time);

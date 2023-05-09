@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CirclePhysics : MonoBehaviour
 {
@@ -111,6 +112,45 @@ public class CirclePhysics : MonoBehaviour
         count = ReadCell(result, count, Grid.GetCell(coords + upLeft));
         count = ReadCell(result, count, Grid.GetCell(coords + up));
         count = ReadCell(result, count, Grid.GetCell(coords + upRight));
+    }
+
+    public Transform debug1, debug2;
+    public static bool CheckRectangle(Vector2 center, Vector2 halfExtents, out List<CircleBody> hits)
+    {
+        hits = new List<CircleBody>();
+        Vector2 min = center - halfExtents;
+        Vector2 max = center + halfExtents;
+        Vector2Int start = Grid.Discretize(min) - Vector2Int.one;
+        start.x = Mathf.Clamp(start.x, 0, Grid.Width - 1);
+        start.y = Mathf.Clamp(start.y, 0, Grid.Width - 1);
+        Vector2Int end = Grid.Discretize(max) + Vector2Int.one;
+        end.x = Mathf.Clamp(end.x, 0, Grid.Height - 1);
+        end.y = Mathf.Clamp(end.y, 0, Grid.Height - 1);
+
+        for (int x = start.x; x <= end.x; x++)
+        {
+            for (int y = start.y; y <= end.y; y++)
+            {
+                var cell = Grid.GetCell(new Vector2Int(x, y));
+                for (int i = 0; i <= cell.Index; i++)
+                {
+                    var body = simulatedBodies[cell.bodies[i]];
+                    if (!body.disableCollision && !body.isTrigger)
+                    {
+                        Vector2 pos = body.CurrentPosition;
+                        float r = body.Radius;
+                        //Check if inside rectangle
+                        if (pos.x >= min.x - r && pos.x <= max.x + r &&
+                            pos.y >= min.y - r && pos.y <= max.y + r)
+                        {
+                            hits.Add(body);
+                        }
+                    }
+                }
+            }
+        }
+
+        return hits.Count > 0;
     }
 
     public static bool CheckPoint(Vector2 position, out CircleBody hit) => CheckCircle(position, 0.0001f, out hit);

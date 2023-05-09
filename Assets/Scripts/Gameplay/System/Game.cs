@@ -28,10 +28,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    public float c_supplySpeed = 5f;
-    public float c_railSpeed = 5f;
-    public float c_comboDuration = 0.3f;
-    public float c_laserTimer = 5f;
+    public GameSettings gameSettings;
     public SpawnSettings spawnSettings;
 
     public TextMeshProUGUI scoreDisplay;
@@ -43,7 +40,7 @@ public class Game : MonoBehaviour
     {
         spawnSettings.Initialize();
 
-        float lineWidth = spawnSettings.c_bubbleRadius * 2.1f;
+        float lineWidth = spawnSettings.bubbleRadius * 2.1f;
         supply.LineRenderer.widthCurve = 
             new AnimationCurve(new Keyframe[] { 
                 new Keyframe(0, 1), 
@@ -68,8 +65,13 @@ public class Game : MonoBehaviour
         ObjectPool.Destroy(collision.Other.gameObject);
     }
 
+    public BubbleType test, all;
+    public int score = 0;
     private void Update()
     {
+        all = BubbleType.Blocked | BubbleType.Red | BubbleType.Green | BubbleType.Yellow | BubbleType.Blue;
+        score = (int)(all & test);
+
         float t = Time.time;
         float dt = Time.deltaTime;
         UpdateRails();
@@ -80,15 +82,15 @@ public class Game : MonoBehaviour
 
     void UpdateRails()
     {
-        supply.Speed = c_supplySpeed;
+        supply.Speed = gameSettings.speedSupply;
         foreach(Rail rail in rails)
-            rail.Speed = c_railSpeed;
+            rail.Speed = gameSettings.speedRail;
     }
 
     float _lastSpawn = -Mathf.Infinity;
     void Spawn(float t)
     {
-        if(t - _lastSpawn > spawnSettings.c_spawnInterval)
+        if(t - _lastSpawn > spawnSettings.spawnInterval)
         {
             _lastSpawn = t;
             spawnSettings.CreateBubble(supply);

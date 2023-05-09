@@ -369,7 +369,6 @@ MonoBehaviour:
     type: 3}
   prefab: {fileID: 4276111548688439807, guid: 73b195eb0f2bb8043803ccd8cd902bac, type: 3}
   CurrentFocus: {fileID: 0}
-  focusBaseColor: {r: 0, g: 0, b: 0, a: 0}
   focusIsTrigger: 1
   debug1: {fileID: 880049633}
   debug2: {fileID: 653172636}
@@ -390,10 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8af6b657f150d846ab3558fa565e1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  c_supplySpeed: 2
-  c_railSpeed: 5
-  c_comboDuration: 1
-  c_laserTimer: 5
+  gameSettings: {fileID: 11400000, guid: 35e1821a553285e4490a443b9f1d8bd1, type: 2}
   spawnSettings: {fileID: 11400000, guid: 1c978690ee0ebba4694a5a9ba21e3dac, type: 2}
   scoreDisplay: {fileID: 136382128}
   supply: {fileID: 227305184}
@@ -405,6 +401,9 @@ MonoBehaviour:
   sinks:
   - {fileID: 440985399}
   - {fileID: 386837896}
+  test: 0
+  all: 0
+  score: 0
 --- !u!114 &214212092
 MonoBehaviour:
   m_ObjectHideFlags: 0

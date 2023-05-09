@@ -4,8 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "new SpawnSettings", menuName = "Game/SpawnSettings")]
 public class SpawnSettings : ScriptableObject
 {
-    public float c_spawnInterval = 1f;
-    public float c_bubbleRadius = 0.5f;
+    public float spawnInterval = 1f;
+    public float bubbleRadius = 0.5f;
     public Color c_green, c_blue, c_red, c_yellow;
     public Material m_single, m_double, m_triple, m_quadruple;
 
@@ -27,13 +27,13 @@ public class SpawnSettings : ScriptableObject
 
         var prefab = GetPrefab();
         var created = ObjectPool.Create<Bubble>(prefab).Item2;
-        created.transform.localScale = Vector3.one * 2f * c_bubbleRadius;
-        created.type = prefab.GetComponent<Bubble>().type;
+        created.transform.localScale = Vector3.one * 2f * bubbleRadius;
+        created.bubbleType = prefab.GetComponent<Bubble>().bubbleType;
         SetColor(created);
 
         var body = created.Body;
         body.CurrentPosition = supply.SamplePoint(0);
-        body.Radius = c_bubbleRadius;
+        body.Radius = bubbleRadius;
         supply.Add(body);
 
         return created;
@@ -46,7 +46,7 @@ public class SpawnSettings : ScriptableObject
 
     void SetColor(Bubble bubble)
     {
-        int count = spawnColorCounts.GetOption("Count: ");
+        int count = (bubble.bubbleType & BubbleType.Blocked) > 0 ? 0: spawnColorCounts.GetOption("Count: ");
         bubble.Body.Renderer.material =
             count <= 1 ? m_single :
             count == 2 ? m_double :
@@ -59,9 +59,9 @@ public class SpawnSettings : ScriptableObject
                 //Get color option
                 BubbleSelect select = spawnColors.GetOption((BubbleSelect t) =>
                     //Cast BubblSelect to BubbleType and check if color was already selected
-                    ((BubbleType)(1 << (int)t) & bubble.type) == 0);
+                    ((BubbleType)(1 << (int)t) & bubble.bubbleType) == 0);
                 //Add selection
-                bubble.type |= (BubbleType)(1 << (int)select);
+                bubble.bubbleType |= (BubbleType)(1 << (int)select);
 
                 Color color =
                     select == BubbleSelect.Blue ? c_blue :
@@ -72,5 +72,7 @@ public class SpawnSettings : ScriptableObject
                 bubble.Body.Renderer.material.SetColor("_Color_" + i, color);
             }
         }
+        else
+            bubble.Body.Renderer.material.SetColor("_Color_0", Color.black);
     }
 }

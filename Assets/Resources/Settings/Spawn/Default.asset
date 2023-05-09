@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ffa7b3c8d9b0b747883f709c2ed6d1f, type: 3}
   m_Name: Default
   m_EditorClassIdentifier: 
-  c_spawnInterval: 3
-  c_bubbleRadius: 0.3
+  spawnInterval: 1
+  bubbleRadius: 0.3
   c_green: {r: 0.31811166, g: 1, b: 0, a: 1}
   c_blue: {r: 0, g: 0.72646475, b: 1, a: 1}
   c_red: {r: 1, g: 0, b: 0, a: 1}
@@ -23,13 +23,16 @@ MonoBehaviour:
   m_triple: {fileID: 2100000, guid: 303ce034e576055409397428b6f40275, type: 2}
   m_quadruple: {fileID: 2100000, guid: c6a3527b67ab1bd48b8a34b98b7d33a2, type: 2}
   spawnPrefabs:
-    weightAdjustment: 0.2
+    weightAdjustment: 1.05
     options:
     - value: {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e,
         type: 3}
+      weight: 20
+    - value: {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855,
+        type: 3}
       weight: 1
   spawnColors:
-    weightAdjustment: 0.2
+    weightAdjustment: 1.05
     options:
     - value: 1
       weight: 1
@@ -40,13 +43,13 @@ MonoBehaviour:
     - value: 4
       weight: 1
   spawnColorCounts:
-    weightAdjustment: 0.2
+    weightAdjustment: 1.05
     options:
     - value: 1
-      weight: 1
+      weight: 100
     - value: 2
-      weight: 1
+      weight: 20
     - value: 3
-      weight: 1
+      weight: 4
     - value: 4
       weight: 1

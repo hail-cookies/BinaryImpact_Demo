@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Flags]
 public enum BubbleType
 {
-    Special = 1,
+    Blocked = 1,
     Red = 2,
     Blue = 4,
     Yellow = 8,
@@ -14,7 +14,7 @@ public enum BubbleType
 
 public enum BubbleSelect
 {
-    Special = 0, 
+    Blocked = 0, 
     Red = 1, 
     Blue = 2, 
     Yellow = 3, 
@@ -29,7 +29,7 @@ public class Bubble : MonoBehaviour
         cache.TryGetValue(obj, out bubble);
     public static bool IsBubble(GameObject obj) => cache.ContainsKey(obj);
 
-    public BubbleType type = BubbleType.Green;
+    public BubbleType bubbleType = BubbleType.Green;
 
     public Label Label { get; protected set; }
 
@@ -45,12 +45,17 @@ public class Bubble : MonoBehaviour
         }
     }
 
-    public virtual void TriggerAbility()
+    public virtual void AbilityTrigger()
     {
         
     }
 
-    public virtual void Suspend(bool state)
+    public virtual void AbilityReset()
+    {
+
+    }
+
+    public virtual void AbilitySuspend(bool state)
     {
 
     }

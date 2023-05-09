@@ -14,29 +14,30 @@ public class WeightedList<T>
         [SerializeField, Min(1)]
         float weight = 1f;
         public float Weight { get { return weight; } }
-        float adjustment = 0f;
-        public float AdjustedWeight { get { return weight + adjustment; } }
+        float adjustment = 1f;
+        public float AdjustedWeight { get { return weight * adjustment; } }
 
         public WeightedOption(T value, float weight)
         {
             this.value = value;
             this.weight = weight;
-            this.adjustment = 0f;
+            this.adjustment = 1f;
         }
 
         public T Use()
         {
-            adjustment = 0;
+            adjustment = 1;
             return value;
         }
 
         public void Pass(float adjustment)
         {
-            this.adjustment += adjustment;
+            this.adjustment *= Mathf.Max(adjustment, 1f);
         }
     }
 
-    public float weightAdjustment = 0.2f;
+    [Min(1)]
+    public float weightAdjustment = 1.1f;
     public List<WeightedOption> options = new List<WeightedOption>();
 
     public void Reset()
