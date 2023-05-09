@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,17 +12,17 @@ public class Player : MonoBehaviour
     void Start()
     {
         a_lMouse.action.Enable();
-        a_lMouse.action.performed += LMouseDown;
+        a_lMouse.action.started += LMouseDown;
         a_lMouse.action.canceled += LMouseUp;
 
         a_mousePosition.action.Enable();
-        a_mousePosition.action.performed += GetMousePosition;
+        //a_mousePosition.action.performed += GetMousePosition;
     }
 
-    public Vector2 MousePosition { get; private set; } = Vector2.zero;
+    public Vector2 MousePosition { get => a_mousePosition.action.ReadValue<Vector2>(); }
     private void GetMousePosition(InputAction.CallbackContext obj)
     {
-        MousePosition = obj.ReadValue<Vector2>();
+        //MousePosition = obj.ReadValue<Vector2>();
     }
 
     private void LMouseUp(InputAction.CallbackContext obj)
@@ -75,7 +76,7 @@ public class Player : MonoBehaviour
         if (Game.Instance.supply.Contains(newFocus))
             return;
         //Is locked
-        if (newFocus.gameObject.TryGetComponent<Locked>(out var locked))
+        if (newFocus && newFocus.gameObject.TryGetComponent<Locked>(out var locked))
             return;
 
         if(newFocus != CurrentFocus)

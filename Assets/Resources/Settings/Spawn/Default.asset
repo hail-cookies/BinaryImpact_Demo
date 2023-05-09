@@ -27,10 +27,25 @@ MonoBehaviour:
     options:
     - value: {fileID: 4276111548688439807, guid: 27737025801103e44b0f36da1183564e,
         type: 3}
-      weight: 5
-    - value: {fileID: 4276111548688439807, guid: 60f70983553d52549acbdb313a8c6a54,
+      weight: 60
+    - value: {fileID: 4276111548688439807, guid: d6289ac83eabd0140b96c3a8b5698576,
         type: 3}
       weight: 1
+    - value: {fileID: 4276111548688439807, guid: 178674696de8de148bffdf8fbaa66e30,
+        type: 3}
+      weight: 1
+    - value: {fileID: 4276111548688439807, guid: 9e402a8438295414bbc465ca77baa71c,
+        type: 3}
+      weight: 2
+    - value: {fileID: 4276111548688439807, guid: ac391bebf5194a94481046d966ce8855,
+        type: 3}
+      weight: 2
+    - value: {fileID: 4276111548688439807, guid: 60f70983553d52549acbdb313a8c6a54,
+        type: 3}
+      weight: 2
+    - value: {fileID: 4276111548688439807, guid: 43d270c2c9ea58c4ba1f6333c2c16264,
+        type: 3}
+      weight: 2
   spawnColors:
     weightAdjustment: 1.05
     options:

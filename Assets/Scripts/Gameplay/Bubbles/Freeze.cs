@@ -16,7 +16,7 @@ public class Freeze : Bubble
 
     static bool ResetTimerSpawn()
     {
-        Game.TimerSpawn = Game.GameSettings.timerSlow;
+        Game.TimerSpawn = Game.SpawnSettings.spawnInterval;
         return true;
     }
 }

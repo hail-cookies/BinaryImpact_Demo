@@ -16,7 +16,7 @@
                 },
                 {
                     "name": "MousePosition",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "30157d03-06b9-4882-be83-91ef5a7980b6",
                     "expectedControlType": "Vector2",
                     "processors": "",
@@ -27,9 +27,9 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "7fe16099-a977-4f4d-91e3-d7028d77b956",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "id": "07feafac-c7f1-46ad-94a7-0e7a3065c895",
+                    "path": "<Touchscreen>/primaryTouch/press",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "LMouse",
@@ -38,8 +38,8 @@
                 },
                 {
                     "name": "",
-                    "id": "3c330c4c-e5d0-4b5e-9714-094a432fcab9",
-                    "path": "<Mouse>/position",
+                    "id": "04278137-7fc9-467c-9988-182fa3abb750",
+                    "path": "<Touchscreen>/primaryTouch/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
